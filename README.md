@@ -1,4 +1,4 @@
-# Antrenman Defteri
+# Set Defteri
 
 Telefonda ana ekrana eklenen kişisel antrenman uygulaması (web uygulaması / PWA).
 

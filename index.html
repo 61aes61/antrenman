@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Antrenman Defteri</title>
+<title>Set Defteri</title>
 <meta name="theme-color" content="#0E1412">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Antrenman">
+<meta name="apple-mobile-web-app-title" content="Set Defteri">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
@@ -288,6 +288,65 @@ details.how summary{font-size:.88rem}
 
 .tabs button{font-size:.6rem;letter-spacing:0;text-transform:none;font-weight:600;gap:2px}
 .tabs button svg{width:21px;height:21px}
+
+/* ---- ana sayfa ---- */
+.hrow{display:flex;justify-content:space-between;align-items:center}
+.greet{font-size:1.15rem;font-weight:700}
+.iconbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;width:40px;height:40px;display:grid;place-items:center;cursor:pointer}
+.goal{grid-template-columns:96px minmax(0,1fr);align-items:center;gap:14px}
+.gring{width:96px;height:96px}
+.gtxt{display:grid;gap:4px;min-width:0}
+.gtxt b{font-size:1.02rem}
+.wdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:4px}
+.wd{font-size:.66rem;font-weight:700;text-align:center;padding:5px 0;border-radius:6px;background:var(--surface2);color:var(--muted)}
+.wd.on{background:var(--accent);color:var(--accent-ink)}
+.wd.today{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.next .nx{display:grid;gap:2px}
+.next .nx b{font-size:1.15rem}
+.nbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nbtns .ghost{padding:11px 8px}
+.primary.sm{font-size:1rem;padding:11px 8px}
+.wmini{display:flex;justify-content:space-between;align-items:center;text-align:left;cursor:pointer;color:var(--ink);font:inherit;width:100%}
+/* ---- ayarlar ---- */
+.srow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.stepper{display:inline-grid;grid-template-columns:34px auto 34px;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.stepper button{border:0;background:var(--surface2);color:var(--ink);height:34px;font-size:1.1rem;cursor:pointer}
+.stepper b{min-width:64px;text-align:center;font-variant-numeric:tabular-nums;padding:0 6px}
+.stepper b small{font-weight:500;color:var(--muted);font-size:.72rem}
+.stepper.sm{grid-template-columns:28px auto 28px}
+.stepper.sm button{height:28px;font-size:.95rem}
+.stepper.sm b{min-width:52px;font-size:.88rem}
+.sseg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.sseg button{border:0;background:transparent;color:var(--muted);padding:7px 11px;font:600 .85rem var(--body);cursor:pointer}
+.sseg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.sheet .row{flex-wrap:nowrap}
+/* ---- düzenleyici ---- */
+.hhrow{display:flex;justify-content:space-between;align-items:end}
+.ghost.sm{padding:5px 10px;font-size:.82rem}
+.edrow{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 12px;border-top:1px solid var(--line)}
+.list>.edrow:first-child{border-top:0}
+.edt{display:grid;gap:5px;min-width:0}
+.edt>b{font-size:.95rem}
+.edc{display:flex;gap:6px;flex-wrap:wrap}
+.edm{display:grid;gap:4px}
+.edm button{border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:7px;width:30px;height:26px;font-size:.7rem;cursor:pointer}
+.edm button:disabled{opacity:.3}
+.edm .del{color:var(--danger);font-size:.8rem}
+.plus{font-size:1.3rem;color:var(--accent);font-weight:700;padding:0 4px}
+.altrow{display:flex;justify-content:space-between;align-items:center;margin-top:-4px}
+/* ---- ısınma ---- */
+.wu-body{display:grid;justify-items:center;align-content:center;gap:12px;padding:20px 20px 40px;text-align:center}
+.wu-n{font-size:1.6rem}
+.wu-t{font-family:var(--display);font-size:5rem;line-height:1;font-variant-numeric:tabular-nums}
+.wu-dots{display:flex;gap:6px}
+.wu-dots i{width:22px;height:5px;border-radius:3px;background:rgba(255,255,255,.2)}
+.wu-dots i.d{background:var(--good)}
+.wu-dots i.c{background:#fff}
+.player.wu .nbtns{width:100%;max-width:360px}
+.player.wu .ghost{color:#fff;border-color:rgba(255,255,255,.4)}
+.player.wu .note,.player.wu .lbl,.player.wu .sub{color:#bbb}
+.wu-done{display:grid;gap:14px;justify-items:center;width:100%;max-width:360px}
+.wu-done b{font-size:1.6rem}
 </style>
 </head>
 <body>
@@ -295,12 +354,12 @@ details.how summary{font-size:.88rem}
 <div id="app"><header class="top"><h1 id="title">Antrenman Programı</h1><span class="sub" id="today"></span></header><main id="main"><p class="msg">Program yükleniyor…</p></main></div>
 <div id="rest" hidden><div class="card"><div class="r1"><span id="rest-t">1:30</span><span id="rest-l">Dinlenme</span><button type="button" data-act="rest-add">+30 sn</button><button type="button" data-act="rest-skip">Geç</button></div><div class="bar"><i id="rest-bar"></i></div></div></div>
 <nav class="tabs" aria-label="Bölümler"><div class="in" role="tablist">
-  <button role="tab" data-tab="w" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg>Antrenman</button>
+  <button role="tab" data-tab="home" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Ana sayfa</button>
+  <button role="tab" data-tab="w" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg>Antrenman</button>
   <button role="tab" data-tab="kardiyo" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Kardiyo</button>
   <button role="tab" data-tab="beslenme" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 0-3 3-3 6s1 4 3 4v8"/></svg>Beslenme</button>
   <button role="tab" data-tab="karne" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>Karne</button>
   <button role="tab" data-tab="hist" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Geçmiş</button>
-  <button role="tab" data-tab="kilo" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 7-9"/><path d="M20 6v4M20 6h-4"/></svg>Kilo</button>
 </div></nav>
 
 <script src="anim.js"></script>
@@ -331,7 +390,23 @@ const LIB={
   lunge:{n:'Geriye lunge',r:'Bacak',t:'bw',s:3,reps:10,per:'her bacak',rest:60,leg:1,q:'reverse lunge nasıl yapılır',tips:['Bir adım geriye at, iki diz de yaklaşık 90° bükülsün.','Öndeki dizin içe kaçmasın.','Öndeki topuktan iterek kalk.']},
   bridge:{n:'Glute bridge',r:'Kalça',t:'bw',s:3,reps:15,rest:45,leg:1,q:'glute bridge nasıl yapılır',tips:['Sırtüstü, dizler bükük, ayaklar yerde.','Topuklardan iterek kalçayı kaldır, tepede 1 saniye sık.','Beli değil kalçayı kullan.']},
   ytw:{n:'Y-T-W',r:'Üst sırt',t:'bw',s:2,reps:8,rest:45,q:'prone Y T W raises',tips:['Yüzüstü yat, alnın yerde.','Kolları sırayla Y, T ve W şeklinde kaldır, her birinde 2 saniye tut.','Kürek kemiklerini sık, boynu zorlama.']},
-  deadbug:{n:'Dead bug',r:'Karın',t:'bw',s:3,reps:10,per:'her taraf',rest:45,q:'dead bug egzersizi nasıl yapılır',tips:['Sırtüstü, kollar tavana, dizler 90°.','Karşı kol ve bacağı yavaşça uzat, bel yere yapışık kalsın.','Geri getir, diğer tarafa geç.']}
+  deadbug:{n:'Dead bug',r:'Karın',t:'bw',s:3,reps:10,per:'her taraf',rest:45,q:'dead bug egzersizi nasıl yapılır',tips:['Sırtüstü, kollar tavana, dizler 90°.','Karşı kol ve bacağı yavaşça uzat, bel yere yapışık kalsın.','Geri getir, diğer tarafa geç.']},
+  legpress:{n:'Leg press',r:'Ön bacak',t:'kg',s:3,reps:10,rest:120,leg:1,q:'leg press nasıl yapılır',tips:['Ayaklar platformda omuz genişliğinde.','Dizler göğse yaklaşana kadar indir, bel sehpadan kalkmasın.','Yukarıda dizleri kilitleme.']},
+  gobletsquat:{n:'Goblet squat',r:'Ön bacak',t:'kg',s:3,reps:10,rest:90,leg:1,q:'goblet squat nasıl yapılır',tips:['Dumbbell\'ı göğsünün önünde dik tut.','Dirsekler dizlerin içinden geçecek kadar in.','Göğüs dik, topuklar yerde.']},
+  dbbench:{n:'Dumbbell bench press',r:'Göğüs',t:'kg',s:3,reps:8,rest:90,q:'dumbbell bench press nasıl yapılır',tips:['Dumbbell\'ları göğüs hizasına kontrollü indir.','Dirsekler gövdeyle yaklaşık 45° açı yapsın.','Yukarıda dumbbell\'ları çarpıştırma.']},
+  machinechest:{n:'Chest press makinesi',r:'Göğüs',t:'kg',s:3,reps:10,rest:90,q:'chest press machine nasıl yapılır',tips:['Koltuğu tutamaklar göğüs ortasına gelecek şekilde ayarla.','Sırtını yaslanmaya yapıştır.','İterken nefes ver, kontrollü geri bırak.']},
+  inclinebar:{n:'İncline bench press',r:'Üst göğüs',t:'kg',s:3,reps:8,rest:120,q:'incline barbell bench press nasıl yapılır',tips:['Sehpayı 30-45° eğime ayarla.','Barı köprücük kemiğinin biraz altına indir.','Kürek kemiklerini sıkışık tut.']},
+  dbrow:{n:'Tek kol dumbbell row',r:'Kanat',t:'kg',s:3,reps:10,rest:90,q:'one arm dumbbell row nasıl yapılır',tips:['Bir el ve aynı taraftaki diz sehpada, sırt düz.','Dumbbell\'ı kalçana doğru çek.','Gövdeyi döndürme, her kolla ayrı set yap.']},
+  cablelateral:{n:'Kablo lateral raise',r:'Yan omuz',t:'kg',s:3,reps:12,rest:60,q:'cable lateral raise nasıl yapılır',tips:['Makarayı en alta al, tutamağı karşı elle tut.','Kolu omuz hizasına kadar yana kaldır.','Yavaş ve kontrollü indir.']},
+  cablecurl:{n:'Kablo biceps curl',r:'Biceps',t:'kg',s:2,reps:12,rest:60,q:'cable biceps curl nasıl yapılır',tips:['Dirsekler gövdenin yanında sabit.','Tepede ön kolu sık, yavaş indir.','Gövdeyi sallama.']},
+  dips:{n:'Dips',r:'Triceps',t:'bw',s:3,reps:8,rest:90,q:'triceps dips nasıl yapılır',tips:['Gövde dik kalırsa arka kol çalışır.','Dirsekler 90° bükülene kadar in.','Omzunda ağrı olursa bu hareketi yapma.']},
+  legcurl:{n:'Leg curl',r:'Arka bacak',t:'kg',s:3,reps:12,rest:60,leg:1,q:'leg curl machine nasıl yapılır',tips:['Dizini makinenin dönme noktasıyla hizala.','Topukları kalçaya doğru çek.','Yavaşça geri bırak.']},
+  hipthrust:{n:'Hip thrust',r:'Kalça',t:'kg',s:3,reps:10,rest:90,leg:1,q:'barbell hip thrust nasıl yapılır',tips:['Sırtın üst kısmı sehpada, bar kalçanın üstünde.','Topuklardan iterek kalçayı kaldır.','Tepede kalçayı sık, beli bükme.']},
+  pullup:{n:'Barfiks',r:'Kanat',t:'bw',s:3,reps:6,rest:120,q:'barfiks nasıl çekilir',tips:['Barı omuzdan biraz geniş tut.','Göğsünü bara doğru çek, sallanma.','Zorlanırsan lastik ya da destekli barfiks makinesi kullan.']},
+  pecdeck:{n:'Pec deck',r:'Göğüs',t:'kg',s:3,reps:12,rest:60,q:'pec deck machine nasıl yapılır',tips:['Koltuğu kollar omuz hizasında olacak şekilde ayarla.','Kolları önde birleştir, göğsü sık.','Kontrollü aç, omuzları öne düşürme.']},
+  dbfly:{n:'Dumbbell fly',r:'Göğüs',t:'kg',s:3,reps:12,rest:60,q:'dumbbell fly nasıl yapılır',tips:['Dirsekler hafif bükük ve sabit kalsın.','Kolları yana aç, göğüste gerilmeyi hisset.','Hafif ağırlık kullan.']},
+  machineshoulder:{n:'Omuz press makinesi',r:'Ön omuz',t:'kg',s:3,reps:10,rest:90,q:'shoulder press machine nasıl yapılır',tips:['Tutamaklar omuz hizasında başlasın.','Sırtını yaslanmaya yapıştır.','Yukarıda dirsekleri kilitleme.']},
+  cablecrunch:{n:'Cable crunch',r:'Karın',t:'kg',s:3,reps:12,rest:60,q:'cable crunch nasıl yapılır',tips:['Halatı başının yanında tut, dizlerinin üstüne çök.','Karnını sıkarak gövdeyi aşağı kıvır.','Kalçayla değil karınla çek.']}
 };
 const PROGRAMS={
   salon:{name:'Salon',days:{A:{title:'Göğüs ağırlıklı',ex:['squat','bench','incline','csrow','lateral','curl','pushdown','plank']},B:{title:'Sırt ağırlıklı',ex:['rdl','pulldown','seatedrow','crossover','ohp','hammer','ohext','legraise']}},cardio:true,
@@ -339,6 +414,18 @@ const PROGRAMS={
   ev:{name:'Ev · sabah',days:{A:{title:'Sabah 1',ex:['pushup','bwsquat','bagrow','plank']},B:{title:'Sabah 2',ex:['pike','lunge','bridge','ytw','deadbug']}},
     note:'3 dk ısın: kol çevirme, kedi-deve, kalça açma, 10 yavaş squat. Hareketleri tur halinde yap, 3 tur. Tükenmeye kadar gitme.'}
 };
+
+/* ---------- Kullanıcı programı ve ayarlar ---------- */
+const DEFAULT_PLAN=(()=>{const o={};for(const [p,P] of Object.entries(PROGRAMS)){o[p]={};for(const d of ['A','B'])o[p][d]=P.days[d].ex.map(k=>({k}))}return o})();
+let plans=lsGet('ad-plans',null)||JSON.parse(JSON.stringify(DEFAULT_PLAN));
+['salon','ev'].forEach(p=>{plans[p]=plans[p]||{};['A','B'].forEach(d=>{if(!Array.isArray(plans[p][d]))plans[p][d]=JSON.parse(JSON.stringify(DEFAULT_PLAN[p][d]))})});
+function savePlans(){lsSet('ad-plans',plans)}
+function baseKeys(p,d){return (plans[p][d]||[]).map(x=>x.k).filter(k=>LIB[k])}
+function Ecfg(p,d,k){const ent=(plans[p][d]||[]).find(x=>x.k===k),b=LIB[k];return ent&&(ent.s||ent.reps)?Object.assign({},b,ent.s?{s:ent.s}:{},ent.reps?{reps:ent.reps}:{}):b}
+function E(k){return Ecfg(prog,day,k)}
+const settings=Object.assign({goal:3,restBig:120,restMid:90,restIso:60,ss:20,theme:'system',unit:'kg',sound:true,vib:true},lsGet('ad-settings',{}));
+function saveSettings(){lsSet('ad-settings',settings)}
+let editing=false;
 
 /* ---------- Videolar (Pexels, ücretsiz lisans) ---------- */
 const VIDEOS={"squat": {"u": "https://videos.pexels.com/video-files/35585574/15079385_1080_1920_30fps.mp4", "p": "https://www.pexels.com/video/man-performing-squats-in-gym-with-equipment-35585574/"}, "bench": {"u": "https://videos.pexels.com/video-files/5320001/5320001-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-person-doing-bench-press-exercise-5320001/"}, "incline": {"u": "https://videos.pexels.com/video-files/34568705/14646162_1920_1080_25fps.mp4", "p": "https://www.pexels.com/video/intense-indoor-dumbbell-bench-press-workout-34568705/"}, "lateral": {"u": "https://videos.pexels.com/video-files/5319102/5319102-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-man-working-out-using-dumbbell-5319102/"}, "curl": {"u": "https://videos.pexels.com/video-files/4367577/4367577-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-biceps-curls-4367577/"}, "pushdown": {"u": "https://videos.pexels.com/video-files/6892083/6892083-sd_360_640_25fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-triceps-pushdown-with-his-instructor-6892083/"}, "plank": {"u": "https://videos.pexels.com/video-files/7801720/7801720-sd_960_406_25fps.mp4", "p": "https://www.pexels.com/video/a-woman-doing-plank-exercise-on-a-yoga-mat-7801720/"}, "pulldown": {"u": "https://videos.pexels.com/video-files/35585697/15079855_1080_1920_30fps.mp4", "p": "https://www.pexels.com/video/intense-gym-workout-with-lat-pulldown-35585697/"}, "seatedrow": {"u": "https://videos.pexels.com/video-files/4367642/4367642-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-a-seated-cable-row-4367642/"}, "ohp": {"u": "https://videos.pexels.com/video-files/4367541/4367541-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-dumbbell-shoulder-press-4367541/"}, "hammer": {"u": "https://videos.pexels.com/video-files/15528204/15528204-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-biceps-exercises-with-dumbbells-at-the-gym-15528204/"}, "ohext": {"u": "https://videos.pexels.com/video-files/6286166/6286166-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/woman-doing-tricep-extensions-6286166/"}, "legraise": {"u": "https://videos.pexels.com/video-files/8981753/8981753-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/a-woman-lying-down-on-the-ground-with-legs-raised-on-a-tree-trunk-8981753/"}, "pushup": {"u": "https://videos.pexels.com/video-files/8520078/8520078-sd_960_394_25fps.mp4", "p": "https://www.pexels.com/video/a-fit-man-doing-push-ups-8520078/"}, "bwsquat": {"u": "https://videos.pexels.com/video-files/4267356/4267356-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/video-of-woman-doing-squats-4267356/"}, "bagrow": {"u": "https://videos.pexels.com/video-files/5319435/5319435-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-man-working-out-using-dumbbell-5319435/"}, "lunge": {"u": "https://videos.pexels.com/video-files/8456658/8456658-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-person-doing-reverse-lunges-8456658/"}, "bridge": {"u": "https://videos.pexels.com/video-files/6525487/6525487-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/woman-doing-glute-bridge-exercise-6525487/"}};
@@ -356,7 +443,7 @@ function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 
 /* ---------- State ---------- */
-let tab=lsGet('ad-tab','w');
+let tab=lsGet('ad-tab','home');if(tab==='kilo')tab='karne';if(tab==='lib')tab='w';
 let prog=lsGet('ad-prog','salon');
 let day=null;
 let noLegs=false;
@@ -371,7 +458,7 @@ function lastFor(k){for(const s of sortedSessions()){const e=s.ex&&s.ex[k];if(e&
 function draftKey(){return prog+'-'+day}
 function getDraft(){const k=draftKey();if(!drafts[k]){drafts[k]={date:today(),ex:{},cardio:''}}return drafts[k]}
 function saveDrafts(){lsSet('ad-drafts',drafts)}
-function exSets(k){const d=getDraft();const e=LIB[k];if(!d.ex[k]){d.ex[k]=Array.from({length:e.s},()=>({kg:'',reps:'',done:false}))}return d.ex[k]}
+function exSets(k){const d=getDraft(),e=E(k);let a=d.ex[k];if(!a)a=d.ex[k]=[];while(a.length<e.s)a.push({kg:a.length?a[0].kg:'',reps:'',done:false});if(a.length>e.s&&!a.slice(e.s).some(x=>x.done))a.length=e.s;return a}
 function draftHasData(d){return d&&(Object.values(d.ex||{}).some(a=>a.some(x=>x.done||x.kg!==''||x.reps!==''))||d.cardio)}
 
 /* ---------- Render ---------- */
@@ -380,10 +467,11 @@ function render(){
   $('#today').textContent=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',weekday:'long'});
   document.querySelectorAll('.tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===tab)));
   if(tab==='lib')tab='w';
-  const TT={w:'Antrenman Programı',kardiyo:'Kardiyo',beslenme:'Beslenme',karne:'Karne',hist:'Geçmiş',kilo:'Kilo Takibi'};
-  $('#title').textContent=TT[tab]||TT.w;
-  $('#main').innerHTML=tab==='w'?workoutView():tab==='kardiyo'?soonView('Kardiyo','Yürüyüş, koşu ve bisiklet kayıtların burada olacak.'):tab==='beslenme'?soonView('Beslenme','Öğünlerin ve günlük protein, karbonhidrat, yağ, kalori takibin burada olacak.'):tab==='karne'?karneView():tab==='hist'?histView():kiloView();
-  if(tab==='kilo')drawChart();
+  const TT={home:'Set Defteri',w:'Antrenman Programı',kardiyo:'Kardiyo',beslenme:'Beslenme',karne:'Karne',hist:'Geçmiş'};
+  if(!TT[tab])tab='home';
+  $('#title').textContent=TT[tab];
+  $('#main').innerHTML=tab==='home'?homeView():tab==='w'?workoutView():tab==='kardiyo'?soonView('Kardiyo','Yürüyüş, koşu ve bisiklet kayıtların burada olacak.'):tab==='beslenme'?soonView('Beslenme','Öğünlerin ve günlük protein, karbonhidrat, yağ, kalori takibin burada olacak.'):tab==='karne'?karneView()+'<h2 class="hh">Kilo</h2>'+kiloView():histView();
+  if(tab==='karne')drawChart();
   mountAnims();
 }
 function softRender(){const a=document.activeElement;if(a&&a.tagName==='INPUT'&&$('#main').contains(a)){pendingRender=true;return}render()}
@@ -391,31 +479,32 @@ function softRender(){const a=document.activeElement;if(a&&a.tagName==='INPUT'&&
 const GROUP={'Göğüs':'chest','Üst göğüs':'chest','Alt göğüs':'chest','Sırt':'back','Üst sırt':'back','Orta sırt':'back','Kanat':'back','Omuz':'shoulder','Yan omuz':'shoulder','Ön omuz':'shoulder','Biceps':'arm','Triceps':'arm','Ön bacak':'leg','Arka bacak':'leg','Bacak':'leg','Kalça':'leg','Karın':'core','Alt karın':'core'};
 function initials(n){const w=n.replace(/[()\/·.]/g,' ').split(/\s+/).filter(Boolean);return (w.length>1?w[0][0]+w[1][0]:w[0].slice(0,2)).toLocaleUpperCase('tr-TR')}
 function thumb(k){const e=LIB[k];return `<span class="thumb" style="--g:var(--g-${GROUP[e.r]||'cardio'})" aria-hidden="true">${esc(initials(e.n))}</span>`}
-function curList(){return PROGRAMS[prog].days[day].ex.filter(k=>!(noLegs&&LIB[k].leg))}
+function curList(){const sw=getDraft().swap||{};return baseKeys(prog,day).map(k=>sw[k]||k)}
 function progIcon(k){
-  const e=LIB[k],n=exSets(k).filter(x=>x.done).length,C=2*Math.PI*15,f=n/e.s;
+  const e=E(k),n=exSets(k).filter(x=>x.done).length,C=2*Math.PI*15,f=n/e.s;
   if(n===e.s)return `<svg class="prog" viewBox="0 0 38 38" role="img" aria-label="Tamamlandı"><circle cx="19" cy="19" r="17" style="fill:var(--good);stroke:none"/><path d="M12 19.5l4.5 4.5L26 14.5" style="fill:none;stroke:var(--bg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   return `<svg class="prog" viewBox="0 0 38 38" role="img" aria-label="${n}/${e.s} set"><circle cx="19" cy="19" r="15" style="stroke:var(--line)"/>${n?`<circle cx="19" cy="19" r="15" style="stroke:var(--accent)" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 19 19)" stroke-linecap="round"/>`:''}<text x="19" y="23.5" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--muted)">${n}/${e.s}</text></svg>`;
 }
-function exRow(k){const e=LIB[k];return `<button type="button" class="exrow" data-open="${k}">${thumb(k)}<span class="txt"><span class="nm">${esc(e.n)}</span><span class="rg"><span class="sr">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}</span> · ${esc(e.r)}</span></span>${progIcon(k)}</button>`}
+function exRow(k){const e=E(k);return `<button type="button" class="exrow" data-open="${k}">${thumb(k)}<span class="txt"><span class="nm">${esc(e.n)}</span><span class="rg"><span class="sr">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}</span> · ${esc(e.r)}</span></span>${progIcon(k)}</button>`}
 function dayNo(d){return d==='B'?2:1}
 function planName(p,d){return (p==='salon'?'Salon ':'Ev ')+dayNo(d)}
 function workoutView(){
   if(!day)day=nextDay(prog);
+  if(editing)return editView();
   if(openEx&&curList().includes(openEx))return detailView(openEx);
   openEx=null;
   const P=PROGRAMS[prog],d=getDraft(),list=curList();
   const nd=nextDay(prog),sub={salon:{A:'Göğüs',B:'Sırt'},ev:{A:'',B:''}}[prog];
   let h=`<div class="switch"><div class="mseg" role="group" aria-label="Program">${Object.entries(PROGRAMS).map(([pk,PP])=>`<button type="button" data-prog="${pk}" aria-pressed="${prog===pk}">${pk==='salon'?'Salon':'Ev'}</button>`).join('')}</div>
   <div class="dseg" role="group" aria-label="Gün">${['A','B'].map(x=>`<button type="button" data-day="${x}" aria-pressed="${day===x}">Gün ${dayNo(x)}${sub[x]?' · '+sub[x]:''}${nd===x?'<i>Sıradaki</i>':''}</button>`).join('')}</div></div>
-  <details class="notes"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 20h20z" style="fill:var(--warn)"/><path d="M12 9v5" style="stroke:var(--bg)" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17" r="1.3" style="fill:var(--bg)"/></svg>Antrenman Notları<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="nb"><p class="note">${esc(P.note)}</p><p class="note">Bir harekete dokun, setlerini orada işaretle. Mavi kutudaki hareketler süper set: arka arkaya yapılır.</p></div></details>
-  <h2 class="hh">Hareketler</h2><div class="list">`;
-  for(let i=0;i<list.length;i++){const k=list[i],e=LIB[k];
+  <details class="notes"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 20h20z" style="fill:var(--warn)"/><path d="M12 9v5" style="stroke:var(--bg)" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17" r="1.3" style="fill:var(--bg)"/></svg>Antrenman Notları<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="nb"><p class="note">${esc(P.note)}</p><p class="note">Bir harekete dokun, setlerini orada işaretle. Mavi kutudaki hareketler süper set: arka arkaya yapılır.</p><button type="button" class="ghost" data-warmup="1" style="justify-self:start">Isınmayı başlat</button></div></details>
+  <div class="hhrow"><h2 class="hh">Hareketler</h2><button type="button" class="ghost sm" data-edit="1">Düzenle</button></div><div class="list">`;
+  for(let i=0;i<list.length;i++){const k=list[i],e=E(k);
     if(e.ss&&list[i+1]===e.ss){h+=`<div class="ssg">${exRow(k)}${exRow(list[i+1])}<span class="ssb">Süper Set</span></div>`;i++}
     else h+=exRow(k);}
   if(P.cardio)h+=`<div class="crow"><span class="thumb" style="--g:var(--g-cardio)" aria-hidden="true">YÜ</span><span class="txt"><span style="font-weight:600;font-size:1.06rem">Eğimli yürüyüş</span><span class="rg">10-15 dk · vaktin daralırsa kısalt</span></span><div class="field"><input id="cardio" inputmode="numeric" value="${esc(d.cardio)}" placeholder="15" aria-label="Yürüyüş dakika"><span>dk</span></div></div>`;
   h+='</div>';
-  const doneCount=list.reduce((n,k)=>n+exSets(k).filter(x=>x.done).length,0),total=list.reduce((n,k)=>n+LIB[k].s,0);
+  const doneCount=list.reduce((n,k)=>n+exSets(k).filter(x=>x.done).length,0),total=list.reduce((n,k)=>n+E(k).s,0);
   h+=`<button class="primary" id="finish" ${saving?'disabled':''}>${saving?'Kaydediliyor…':`Antrenmanı bitir · ${doneCount}/${total} set`}</button>`;
   h+=`<p class="msg${saveErr?' err':''}" role="status">${esc(saveErr)}</p>`;
   if(draftHasData(d))h+=`<button class="ghost" id="reset" style="justify-self:start">Bu antrenmanı sıfırla</button>`;
@@ -424,16 +513,17 @@ function workoutView(){
 function detailView(k){
   const list=curList(),i=list.indexOf(k),prev=list[i-1],next=list[i+1];
   return `<button type="button" class="back" data-back="1"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:currentColor" stroke-width="2.5"><path d="M15 6l-6 6 6 6"/></svg>${esc(planName(prog,day))} · Hareketler</button>
+  <div class="altrow">${origOf(k)!==k?`<span class="sub">${esc(LIB[origOf(k)].n)} yerine</span>`:'<span></span>'}<button type="button" class="ghost sm" data-alt="${k}">Alternatif hareket</button></div>
   ${exCard(k)}
   <div class="dnav"><button type="button" ${prev?`data-goto="${prev}"`:'disabled style="opacity:.4"'}>‹ ${prev?esc(LIB[prev].n):'Önceki'}</button><button type="button" class="go" ${next?`data-goto="${next}"`:'data-back="1"'}>${next?esc(LIB[next].n)+' ›':'Listeye dön'}</button></div>`;
 }
 function exCard(k){
-  const e=LIB[k],sets=exSets(k),L=lastFor(k),pa=L?L.s.ex[k]:null,kg=e.t==='kg';
+  const e=E(k),sets=exSets(k),L=lastFor(k),pa=L?L.s.ex[k]:null,kg=e.t==='kg';
   let hint='';
   if(L&&L.sets.length>=e.s&&L.sets.every(x=>num(x.reps)>=e.reps))hint=` <span class="up">↑ ${kg?'Ağırlığı artır':e.t==='sn'?'Süreyi uzat':'Zorlaştır'}</span>`;
   const doneN=sets.filter(x=>x.done).length;
   const lastKg=L&&kg?L.sets[0].kg:null;
-  const wrow=kg?`<div class="wrow"><label for="kgx-${k}">Ağırlık<small>${lastKg!=null?'Geçen sefer '+esc(fmtN(lastKg))+' '+esc(e.unit||'kg'):'Tüm setler için'}</small></label><div class="field"><input class="in big" id="kgx-${k}" data-k="${k}" data-f="kgall" inputmode="decimal" value="${esc(sets[0].kg)}" placeholder="${lastKg!=null?esc(fmtN(lastKg)):'0'}" aria-label="Ağırlık"><span>${esc(e.unit||'kg')}</span></div></div>`:'';
+  const wrow=kg?`<div class="wrow"><label for="kgx-${k}">Ağırlık<small>${lastKg!=null?'Geçen sefer '+esc(fmtN(lastKg))+' '+esc(U(e)):'Tüm setler için'}</small></label><div class="field"><input class="in big" id="kgx-${k}" data-k="${k}" data-f="kgall" inputmode="decimal" value="${esc(sets[0].kg)}" placeholder="${lastKg!=null?esc(fmtN(lastKg)):'0'}" aria-label="Ağırlık"><span>${esc(U(e))}</span></div></div>`:'';
   const hdr=`<div class="set hdr"><span>SET</span><span>ÖNCEKİ</span><span>${e.t==='sn'?'SÜRE (SN)':'TEKRAR'}</span><span></span></div>`;
   const rows=sets.map((x,i)=>{
     const p=pa&&pa[i]&&pa[i].done?pa[i]:null;
@@ -465,7 +555,7 @@ function closePlayer(){document.querySelectorAll('.player').forEach(p=>{clearInt
 function progChart(k){
   const e=LIB[k],kg=e.t==='kg';
   const pts=[...sessions].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).map(s=>{const a=s.ex&&s.ex[k];if(!a)return null;const b=bestOf(e,a.filter(z=>z.done));if(!b)return null;const v=kg?b.kg:b.reps;return v==null?null:{d:s.date,v,r:b.reps}}).filter(Boolean).slice(-12);
-  const unit=kg?(e.unit||'kg'):e.t==='sn'?'sn':'tekrar';
+  const unit=kg?U(e):e.t==='sn'?'sn':'tekrar';
   if(!pts.length)return `<div class="pchart"><div class="pc-h"><b>İlerleme</b></div><p class="note">Bu hareketi kaydettikçe ${kg?'kilonun':'tekrarının'} nasıl arttığı burada grafik olarak görünecek.</p></div>`;
   const best=Math.max(...pts.map(p=>p.v)),first=pts[0].v,last=pts[pts.length-1].v,diff=Math.round((last-first)*10)/10;
   let svg='';
@@ -553,9 +643,11 @@ function drawChart(){
 
 /* ---------- Rest timer ---------- */
 let timer={end:0,total:0,iv:null,label:''},actx=null;
+function initAudio(){try{if(!actx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)actx=new AC()}else if(actx.state==='suspended')actx.resume()}catch(e){}}
+function alertDone(){if(settings.sound)beep();if(settings.vib)try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
 function beep(){try{if(!actx)return;const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.setValueAtTime(.2,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.5);o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+.5)}catch(e){}}
 function startRest(sec,label){
-  try{if(!actx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)actx=new AC()}else if(actx.state==='suspended')actx.resume()}catch(e){}
+  initAudio();
   timer.end=Date.now()+sec*1000;timer.total=sec;timer.label=label;
   const r=$('#rest');r.hidden=false;r.classList.remove('ready');
   clearInterval(timer.iv);timer.iv=setInterval(tick,250);tick();
@@ -566,7 +658,7 @@ function tick(){
   $('#rest-t').textContent=m+':'+String(s).padStart(2,'0');
   $('#rest-l').textContent=left?'Dinlenme · sıradaki: '+timer.label:'Hazırsın · '+timer.label;
   $('#rest-bar').style.transform='scaleX('+(timer.total?left/timer.total:0)+')';
-  if(!left){clearInterval(timer.iv);timer.iv=null;$('#rest').classList.add('ready');beep();try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}setTimeout(()=>{if(!timer.iv)$('#rest').hidden=true},4000)}
+  if(!left){clearInterval(timer.iv);timer.iv=null;$('#rest').classList.add('ready');alertDone();setTimeout(()=>{if(!timer.iv)$('#rest').hidden=true},4000)}
 }
 
 /* ---------- Data ---------- */
@@ -592,7 +684,7 @@ function importData(file){
 async function finish(){
   const d=getDraft(),P=PROGRAMS[prog];
   const ex={};
-  P.days[day].ex.forEach(k=>{if(noLegs&&LIB[k].leg)return;const e=LIB[k];const a=exSets(k).map(x=>({kg:e.t==='kg'?num(x.kg):null,reps:num(x.reps),done:!!x.done}));if(a.some(x=>x.done))ex[k]=a});
+  curList().forEach(k=>{const e=E(k);const a=exSets(k).map(x=>({kg:e.t==='kg'?num(x.kg):null,reps:num(x.reps),done:!!x.done}));if(a.some(x=>x.done))ex[k]=a});
   const cardio=num(d.cardio);
   if(!Object.keys(ex).length&&!cardio){saveErr='Kaydetmek için en az bir seti ✓ ile işaretle.';render();return}
   saving=true;saveErr='';render();
@@ -613,7 +705,7 @@ function summaryHTML(doc,hist){
   for(const k of Object.keys(doc.ex||{})){const e=LIB[k];if(!e)continue;const done=doc.ex[k].filter(z=>z.done);if(!done.length)continue;sets+=done.length;
     if(e.t==='kg')done.forEach(z=>vol+=(z.kg||0)*(z.reps||0));
     const b=bestOf(e,done),hb=histBest(k,hist),v=b?(e.t==='kg'?b.kg:b.reps):null,pr=b&&hb!=null&&v>hb;if(pr)prs++;
-    const bt=b?((e.t==='kg'&&b.kg!=null?fmtN(b.kg)+' kg × ':'')+(b.reps==null?'?':b.reps)+(e.t==='sn'?' sn':'')):'–';
+    const bt=b?((e.t==='kg'&&b.kg!=null?fmtN(b.kg)+' '+U(e)+' × ':'')+(b.reps==null?'?':b.reps)+(e.t==='sn'?' sn':'')):'–';
     rows.push(`<li>${thumb(k)}<span class="txt"><b>${esc(e.n)}</b><span class="rg">${done.length} set · en iyi ${esc(bt)}</span></span>${pr?`<span class="pr">${TROPHY}Rekor</span>`:''}</li>`)}
   const tile=(l,v)=>`<div class="tile"><span class="lbl">${l}</span><strong>${v}</strong></div>`;
   return `<div class="sheet" role="dialog" aria-modal="true" aria-label="Antrenman özeti"><div class="sheet-in">
@@ -622,7 +714,7 @@ function summaryHTML(doc,hist){
     <ul class="sumlist">${rows.join('')}${doc.cardio?`<li><span class="thumb" style="--g:var(--g-cardio)" aria-hidden="true">YÜ</span><span class="txt"><b>Eğimli yürüyüş</b><span class="rg">${esc(doc.cardio)} dk</span></span></li>`:''}</ul>
     <button class="primary" type="button" data-close="1">Kapat</button></div></div>`;
 }
-function volTxt(v){v=Math.round(v);return v>=10000?fmtN((v/1000).toFixed(1))+'<small> ton</small>':v.toLocaleString('tr-TR')+'<small> kg</small>'}
+function volTxt(v){v=Math.round(v);return v>=10000?fmtN((v/1000).toFixed(1))+'<small> ton</small>':v.toLocaleString('tr-TR')+'<small> '+settings.unit+'</small>'}
 function closeSheet(){document.querySelectorAll('.sheet').forEach(x=>x.remove())}
 function showSummary(doc,hist){closeSheet();document.body.insertAdjacentHTML('beforeend',summaryHTML(doc,hist))}
 
@@ -674,10 +766,151 @@ function karneView(){
     <p class="note">Her kas grubu için haftada 6-12 set iyi bir hedef.</p></section>`;
 }
 
+/* ---------- Ayarlar ---------- */
+function restFor(e){return e.rest>=120?settings.restBig:e.rest>=90?settings.restMid:settings.restIso}
+function U(e){return (e&&e.unit)||settings.unit}
+function applyTheme(){
+  const r=document.documentElement;if(settings.theme==='system')delete r.dataset.theme;else r.dataset.theme=settings.theme;
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=getComputedStyle(r).getPropertyValue('--bg').trim()||'#0E1412';
+}
+function settingsHTML(){
+  const step=(id,label,val,unit)=>`<div class="srow"><span>${label}</span><div class="stepper"><button type="button" data-set="${id}" data-d="-1" aria-label="${label} azalt">−</button><b>${val}${unit?'<small> '+unit+'</small>':''}</b><button type="button" data-set="${id}" data-d="1" aria-label="${label} artır">+</button></div></div>`;
+  const seg=(id,label,opts)=>`<div class="srow"><span>${label}</span><div class="sseg">${opts.map(([v,t])=>`<button type="button" data-opt="${id}" data-v="${v}" aria-pressed="${String(settings[id])===String(v)}">${t}</button>`).join('')}</div></div>`;
+  return `<div class="sheet" role="dialog" aria-modal="true" aria-label="Ayarlar"><div class="sheet-in">
+    <div class="row"><h2 class="sh">Ayarlar</h2><button type="button" class="ghost" data-close="1">Kapat</button></div>
+    <section class="panel"><span class="lbl">Hedef</span>${step('goal','Haftalık antrenman',settings.goal,'gün')}</section>
+    <section class="panel"><span class="lbl">Dinlenme süreleri</span>
+      ${step('restBig','Ana hareketler',settings.restBig,'sn')}${step('restMid','Orta hareketler',settings.restMid,'sn')}${step('restIso','Küçük hareketler',settings.restIso,'sn')}${step('ss','Süper set arası',settings.ss,'sn')}</section>
+    <section class="panel"><span class="lbl">Görünüm ve birim</span>
+      ${seg('theme','Tema',[['system','Sistem'],['dark','Koyu'],['light','Açık']])}${seg('unit','Ağırlık birimi',[['kg','kg'],['lb','lb']])}
+      ${seg('sound','Sayaç sesi',[['true','Açık'],['false','Kapalı']])}${seg('vib','Titreşim',[['true','Açık'],['false','Kapalı']])}
+      <p class="note">Birim değiştirmek eski kayıtları çevirmez, sadece yazılan birimi değiştirir.</p></section>
+  </div></div>`;
+}
+const SET_RULES={goal:[1,7,1],restBig:[30,300,15],restMid:[30,240,15],restIso:[15,180,15],ss:[0,90,5]};
+function openSettings(){closeSheet();document.body.insertAdjacentHTML('beforeend',settingsHTML())}
+function refreshSettings(){const open=document.querySelector('.sheet [aria-label="Ayarlar"]')||document.querySelector('.sheet[aria-label="Ayarlar"]');if(open){openSettings()}}
+
+/* ---------- Hafta ve seri ---------- */
+function weekStart(t){const d=new Date(t);d.setHours(0,0,0,0);const wd=(d.getDay()+6)%7;d.setDate(d.getDate()-wd);return d.getTime()}
+function weekCount(ws){const we=ws+7*864e5;return sessions.filter(s=>(s.createdAt||0)>=ws&&(s.createdAt||0)<we).length}
+function streak(){
+  let ws=weekStart(Date.now()),n=0;
+  if(weekCount(ws)>=settings.goal)n++;
+  for(let i=0;i<200;i++){ws-=7*864e5;if(weekCount(ws)>=settings.goal)n++;else break}
+  return n;
+}
+
+/* ---------- Ana sayfa ---------- */
+function homeView(){
+  const ws=weekStart(Date.now()),wc=weekCount(ws),goal=settings.goal,st=streak();
+  const C=2*Math.PI*42,f=Math.min(1,wc/goal);
+  const nd=nextDay(prog),P=PROGRAMS[prog],keys=baseKeys(prog,nd),totalSets=keys.reduce((n,k)=>n+(Ecfg(prog,nd,k).s||0),0);
+  const last=sortedSessions()[0];
+  const w=[...weights].sort((a,b)=>a.date<b.date?-1:1),wl=w[w.length-1],w0=w[0];
+  const hr=new Date().getHours(),greet=hr<12?'Günaydın':hr<18?'İyi günler':'İyi akşamlar';
+  const days=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map((t,i)=>{const s0=ws+i*864e5,has=sessions.some(s=>(s.createdAt||0)>=s0&&(s.createdAt||0)<s0+864e5),isT=weekStart(Date.now())===ws&&((new Date().getDay()+6)%7)===i;return `<span class="wd${has?' on':''}${isT?' today':''}">${t}</span>`}).join('');
+  return `<div class="hrow"><span class="greet">${greet}</span><button type="button" class="iconbtn" data-settings="1" aria-label="Ayarlar"><svg viewBox="0 0 24 24" width="22" height="22" style="fill:none;stroke:currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
+  <section class="panel goal">
+    <svg class="gring" viewBox="0 0 100 100" role="img" aria-label="Bu hafta ${wc} / ${goal} antrenman"><circle cx="50" cy="50" r="42" style="fill:none;stroke:var(--line)" stroke-width="9"/><circle cx="50" cy="50" r="42" style="fill:none;stroke:${wc>=goal?'var(--good)':'var(--accent)'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle" font-size="22" font-weight="700" style="fill:var(--ink)">${wc}/${goal}</text></svg>
+    <div class="gtxt"><b>${wc>=goal?'Haftalık hedef tamam':'Bu hafta '+(goal-wc)+' antrenman kaldı'}</b><span class="sub">${st?`<svg viewBox="0 0 24 24" width="14" height="14" style="fill:var(--warn);vertical-align:-2px"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-4 2-5 0 2 1 3 2 3 0-4-1-6 1-9z"/></svg> ${st} hafta üst üste hedef`:'Hedefi tuttur, seri başlasın'}</span><div class="wdays">${days}</div></div>
+  </section>
+  <section class="panel next">
+    <span class="lbl">Sıradaki antrenman</span>
+    <div class="nx"><b>${esc(planName(prog,nd))}</b><span class="sub">${esc(P.days[nd].title)} · ${keys.length} hareket · ${totalSets} set</span></div>
+    <div class="nbtns"><button type="button" class="ghost" data-warmup="1">Isınmayı başlat</button><button type="button" class="primary sm" data-start="${prog}-${nd}">Antrenmana başla</button></div>
+  </section>
+  ${last?`<section class="panel"><span class="lbl">Son antrenman</span><div class="row"><span><b>${esc(planName(last.program,last.day))}</b> <span class="sub">${esc(fmtD(last.date))}${last.duration?' · '+last.duration+' dk':''}</span></span><button type="button" class="ghost" data-sum="${esc(last.id)}">Özet</button></div></section>`:''}
+  <button type="button" class="panel wmini" data-tab="karne"><span class="lbl">Kilo</span><span><b>${wl?fmtN(wl.kg)+' kg':'–'}</b>${wl&&w0&&w.length>1?` <span class="sub">başlangıçtan ${wl.kg-w0.kg>0?'+':''}${fmtN(Math.round((wl.kg-w0.kg)*10)/10)} kg</span>`:''}</span></button>`;
+}
+
+/* ---------- Isınma ---------- */
+const WARMUP={
+  salon:[{n:'Yürüyüş ya da bisiklet',sec:300,d:'Hafif tempoda, nefesin biraz hızlansın.'},{n:'Kol çevirme',sec:30,d:'15 ileri, 15 geri.'},{n:'Kalça açma',sec:30,d:'Dizini yukarı kaldırıp dışa çevir, iki bacakla sırayla.'},{n:'Kedi-deve',sec:30,d:'Dört ayak üstünde sırtını yuvarla, sonra çukurlaştır.'},{n:'Yavaş squat',sec:45,d:'10 tekrar, tam hareket açıklığında.'},{n:'İlk hareketin hafif seti',sec:60,d:'Çalışma ağırlığının yarısıyla 10 tekrar.'}],
+  ev:[{n:'Yerinde yürüyüş',sec:60,d:'Kolları da sallayarak.'},{n:'Kol çevirme',sec:30,d:'15 ileri, 15 geri.'},{n:'Kedi-deve',sec:30,d:'Dört ayak üstünde sırtını yuvarla, sonra çukurlaştır.'},{n:'Kalça açma',sec:30,d:'Dizini yukarı kaldırıp dışa çevir.'},{n:'Yavaş squat',sec:30,d:'10 tekrar.'}]
+};
+let wu=null;
+function wuHTML(){
+  const st=WARMUP[wu.p],s=st[wu.i];
+  if(!s)return `<div class="wu-done"><b>Isınma bitti</b><span class="sub">Hazırsın. İyi antrenmanlar!</span><button type="button" class="primary" data-start="${wu.p}-${nextDay(wu.p)}">Antrenmana başla</button></div>`;
+  const left=Math.max(0,Math.ceil((wu.end-(wu.paused||Date.now()))/1000)),m=Math.floor(left/60),sec=left%60;
+  return `<div class="wu-dots">${st.map((x,j)=>`<i class="${j<wu.i?'d':j===wu.i?'c':''}"></i>`).join('')}</div>
+    <span class="lbl">Adım ${wu.i+1} / ${st.length}</span><b class="wu-n">${esc(s.n)}</b><span class="wu-t">${m}:${String(sec).padStart(2,'0')}</span><p class="note" style="text-align:center">${esc(s.d)}</p>
+    <div class="nbtns"><button type="button" class="ghost" data-wu="pause">${wu.paused?'Devam et':'Duraklat'}</button><button type="button" class="ghost" data-wu="next">Sonraki adım</button></div>`;
+}
+function openWarmup(p){
+  closeWarmup();initAudio();
+  wu={p,i:0,end:Date.now()+WARMUP[p][0].sec*1000,paused:0};
+  document.body.insertAdjacentHTML('beforeend',`<div class="player wu" role="dialog" aria-modal="true" aria-label="Isınma"><div class="ptop"><button type="button" class="pclose" data-wuclose="1">✕ Kapat</button><b>Isınma · ${p==='salon'?'Salon':'Ev'}</b></div><div class="wu-body"></div></div>`);
+  wu.iv=setInterval(wuTick,250);wuTick();
+}
+function wuTick(){
+  const b=document.querySelector('.wu-body');if(!b||!wu){closeWarmup();return}
+  const st=WARMUP[wu.p];
+  if(!wu.paused&&st[wu.i]&&Date.now()>=wu.end){alertDone();wu.i++;if(st[wu.i])wu.end=Date.now()+st[wu.i].sec*1000}
+  b.innerHTML=wuHTML();
+}
+function closeWarmup(){if(wu)clearInterval(wu.iv);wu=null;document.querySelectorAll('.player.wu').forEach(x=>x.remove())}
+
+/* ---------- Program düzenleyici ---------- */
+function editView(){
+  const list=plans[prog][day]||[];
+  const rows=list.map((x,i)=>{const e=LIB[x.k];if(!e)return '';const c=Ecfg(prog,day,x.k),stp=e.t==='sn'?5:1;
+    return `<div class="edrow">${thumb(x.k)}<div class="edt"><b>${esc(e.n)}</b><div class="edc">
+      <span class="stepper sm"><button type="button" data-ed="s" data-d="-1" data-i="${i}" aria-label="Set azalt">−</button><b>${c.s}<small> set</small></b><button type="button" data-ed="s" data-d="1" data-i="${i}" aria-label="Set artır">+</button></span>
+      <span class="stepper sm"><button type="button" data-ed="r" data-d="-${stp}" data-i="${i}" aria-label="Tekrar azalt">−</button><b>${c.reps}<small> ${e.t==='sn'?'sn':'tkr'}</small></b><button type="button" data-ed="r" data-d="${stp}" data-i="${i}" aria-label="Tekrar artır">+</button></span></div></div>
+      <div class="edm"><button type="button" data-ed="up" data-i="${i}" aria-label="Yukarı taşı" ${i?'':'disabled'}>▲</button><button type="button" data-ed="down" data-i="${i}" aria-label="Aşağı taşı" ${i<list.length-1?'':'disabled'}>▼</button><button type="button" class="del" data-ed="del" data-i="${i}" aria-label="${esc(e.n)} hareketini çıkar">✕</button></div></div>`}).join('');
+  return `<button type="button" class="back" data-editdone="1"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:currentColor" stroke-width="2.5"><path d="M15 6l-6 6 6 6"/></svg>Bitti</button>
+    <h2 class="hh" style="margin:0">${esc(planName(prog,day))} programı</h2>
+    <p class="note">Set ve tekrar sayısını değiştir, okla sırala, ✕ ile çıkar. Değişiklikler hemen kaydedilir.</p>
+    <div class="list">${rows||'<p class="note" style="padding:14px">Bu günde hareket yok. Aşağıdan ekle.</p>'}</div>
+    <button type="button" class="primary" data-addpick="1">+ Hareket ekle</button>
+    <button type="button" class="ghost" id="plreset" style="justify-self:start">Bu günü varsayılana döndür</button>`;
+}
+function pickerHTML(){
+  const have=new Set((plans[prog][day]||[]).map(x=>x.k));
+  const groups={chest:'Göğüs',back:'Sırt',shoulder:'Omuz',arm:'Kol',leg:'Bacak',core:'Karın'};
+  let h='';for(const [g,t] of Object.entries(groups)){const ks=Object.keys(LIB).filter(k=>GROUP[LIB[k].r]===g&&!have.has(k));if(!ks.length)continue;
+    h+=`<span class="lbl">${t}</span><div class="list">${ks.map(k=>`<button type="button" class="exrow" data-add="${k}">${thumb(k)}<span class="txt"><span class="nm">${esc(LIB[k].n)}</span><span class="rg">${LIB[k].s} × ${LIB[k].reps}${LIB[k].t==='sn'?' sn':''} · ${esc(LIB[k].r)}</span></span><span class="plus">+</span></button>`).join('')}</div>`}
+  return `<div class="sheet" role="dialog" aria-modal="true" aria-label="Hareket ekle"><div class="sheet-in"><div class="row"><h2 class="sh">Hareket ekle</h2><button type="button" class="ghost" data-close="1">Kapat</button></div>${h}</div></div>`;
+}
+
+/* ---------- Alternatif hareket ---------- */
+const ALT={squat:['legpress','gobletsquat'],bench:['dbbench','machinechest','pushup'],incline:['inclinebar','machinechest'],csrow:['dbrow','seatedrow'],lateral:['cablelateral'],curl:['hammer','cablecurl'],pushdown:['ohext','dips'],plank:['deadbug'],rdl:['legcurl','hipthrust'],pulldown:['pullup','dbrow'],seatedrow:['csrow','dbrow'],crossover:['pecdeck','dbfly'],ohp:['machineshoulder'],hammer:['curl','cablecurl'],ohext:['pushdown','dips'],legraise:['cablecrunch','plank'],pushup:['dbbench'],bwsquat:['lunge','gobletsquat'],bagrow:['dbrow','ytw'],pike:['pushup'],lunge:['bwsquat'],bridge:['hipthrust'],ytw:['bagrow'],deadbug:['plank'],
+  legpress:['squat','gobletsquat'],gobletsquat:['squat','legpress'],dbbench:['bench','machinechest'],machinechest:['bench','dbbench'],inclinebar:['incline'],dbrow:['csrow','seatedrow'],cablelateral:['lateral'],cablecurl:['curl','hammer'],dips:['pushdown'],legcurl:['rdl'],hipthrust:['bridge','rdl'],pullup:['pulldown'],pecdeck:['crossover','dbfly'],dbfly:['pecdeck','crossover'],machineshoulder:['ohp'],cablecrunch:['legraise']};
+function origOf(k){const sw=getDraft().swap||{};return Object.keys(sw).find(o=>sw[o]===k)||k}
+function altHTML(k){
+  const o=origOf(k),opts=[...new Set([o,...(ALT[o]||[])])].filter(x=>x!==k&&LIB[x]);
+  return `<div class="sheet" role="dialog" aria-modal="true" aria-label="Alternatif hareket"><div class="sheet-in"><div class="row"><h2 class="sh">Alternatif hareket</h2><button type="button" class="ghost" data-close="1">Kapat</button></div>
+    <p class="note">Seçtiğin hareket sadece bu antrenman için ${esc(LIB[o].n)} yerine geçer. Kalıcı değiştirmek için programı düzenle.</p>
+    <div class="list">${opts.map(x=>`<button type="button" class="exrow" data-swapto="${x}" data-from="${k}">${thumb(x)}<span class="txt"><span class="nm">${esc(LIB[x].n)}${x===o?' <span class="pill">Orijinal</span>':''}</span><span class="rg">${esc(LIB[x].r)}</span></span><span class="plus">›</span></button>`).join('')||'<p class="note" style="padding:12px">Bu hareket için alternatif yok.</p>'}</div></div></div>`;
+}
+
 /* ---------- Events ---------- */
 document.addEventListener('click',async ev=>{
   const b=ev.target.closest('button');if(!b){if(ev.target.classList&&ev.target.classList.contains('sheet'))closeSheet();return}
   if(b.dataset.close){closeSheet();return}
+  if(b.dataset.settings){openSettings();return}
+  if(b.dataset.set){const id=b.dataset.set,[mn,mx,st]=SET_RULES[id];settings[id]=Math.min(mx,Math.max(mn,settings[id]+st*(+b.dataset.d)));saveSettings();openSettings();render();return}
+  if(b.dataset.opt){const id=b.dataset.opt;let v=b.dataset.v;if(v==='true')v=true;else if(v==='false')v=false;settings[id]=v;saveSettings();applyTheme();openSettings();render();return}
+  if(b.dataset.warmup){openWarmup(prog);return}
+  if(b.dataset.wuclose){closeWarmup();return}
+  if(b.dataset.wu){if(!wu)return;if(b.dataset.wu==='pause'){if(wu.paused){wu.end+=Date.now()-wu.paused;wu.paused=0}else wu.paused=Date.now()}else{wu.i++;const st=WARMUP[wu.p][wu.i];if(st){wu.end=Date.now()+st.sec*1000;wu.paused=0}}wuTick();return}
+  if(b.dataset.start){const [p,d]=b.dataset.start.split('-');closeWarmup();closeSheet();prog=p;day=d;lsSet('ad-prog',prog);tab='w';lsSet('ad-tab',tab);openEx=null;editing=false;render();window.scrollTo(0,0);return}
+  if(b.dataset.edit){editing=true;openEx=null;render();window.scrollTo(0,0);return}
+  if(b.dataset.editdone){editing=false;render();return}
+  if(b.dataset.ed){const L=plans[prog][day],i=+b.dataset.i,x=L[i];if(!x)return;const e=LIB[x.k],c=Ecfg(prog,day,x.k),t=b.dataset.ed;
+    if(t==='s')x.s=Math.max(1,Math.min(8,c.s+(+b.dataset.d)));
+    else if(t==='r')x.reps=Math.max(1,Math.min(e.t==='sn'?300:50,c.reps+(+b.dataset.d)));
+    else if(t==='up'&&i>0)L.splice(i-1,0,L.splice(i,1)[0]);
+    else if(t==='down'&&i<L.length-1)L.splice(i+1,0,L.splice(i,1)[0]);
+    else if(t==='del')L.splice(i,1);
+    savePlans();render();return}
+  if(b.dataset.addpick){closeSheet();document.body.insertAdjacentHTML('beforeend',pickerHTML());return}
+  if(b.dataset.add){plans[prog][day].push({k:b.dataset.add});savePlans();closeSheet();render();toast(LIB[b.dataset.add].n+' eklendi');return}
+  if(b.id==='plreset'){if(b.dataset.armed){plans[prog][day]=JSON.parse(JSON.stringify(DEFAULT_PLAN[prog][day]));savePlans();render()}else{b.dataset.armed='1';b.textContent='Emin misin? Tekrar dokun'}return}
+  if(b.dataset.alt){closeSheet();document.body.insertAdjacentHTML('beforeend',altHTML(b.dataset.alt));return}
+  if(b.dataset.swapto){const d=getDraft(),from=b.dataset.from,to=b.dataset.swapto,o=origOf(from);d.swap=d.swap||{};if(to===o)delete d.swap[o];else d.swap[o]=to;saveDrafts();closeSheet();openEx=to;try{history.replaceState({ex:to},'')}catch(e){}render();window.scrollTo(0,0);return}
   if(b.dataset.play){openPlayer(b.dataset.play);return}
   if(b.dataset.pclose){closePlayer();return}
   if(b.dataset.vmode){vmode=b.dataset.vmode;lsSet('ad-vmode',vmode);const art=b.closest('article');if(art){const k=art.id.slice(3);art.outerHTML=exCard(k);mountAnims()}return}
@@ -686,25 +919,25 @@ document.addEventListener('click',async ev=>{
   if(b.dataset.open){openEx=b.dataset.open;try{history.pushState({ex:openEx},'')}catch(e){}render();window.scrollTo(0,0);return}
   if(b.dataset.goto){openEx=b.dataset.goto;try{history.replaceState({ex:openEx},'')}catch(e){}render();window.scrollTo(0,0);return}
   if(b.dataset.back){const k=openEx;if(history.state&&history.state.ex){history.back()}else{openEx=null;render()}setTimeout(()=>{const r=document.querySelector('[data-open="'+k+'"]');if(r)r.scrollIntoView({block:'center'})},80);return}
-  if(b.dataset.tab){openEx=null;tab=b.dataset.tab;lsSet('ad-tab',tab);pendingDel=null;render();window.scrollTo(0,0);return}
+  if(b.dataset.tab){openEx=null;editing=false;tab=b.dataset.tab;lsSet('ad-tab',tab);pendingDel=null;render();window.scrollTo(0,0);return}
   if(b.dataset.act==='rest-add'){timer.end=Math.max(timer.end,Date.now())+30000;timer.total+=30;if(!timer.iv){timer.iv=setInterval(tick,250);$('#rest').classList.remove('ready')}tick();return}
   if(b.dataset.act==='rest-skip'){clearInterval(timer.iv);timer.iv=null;$('#rest').hidden=true;return}
   if(b.dataset.prog){prog=b.dataset.prog;lsSet('ad-prog',prog);day=null;saveErr='';render();return}
   if(b.dataset.day){day=b.dataset.day;saveErr='';render();return}
   if(b.dataset.chk){
-    const k=b.dataset.chk,i=+b.dataset.i,e=LIB[k],sets=exSets(k),x=sets[i];
+    const k=b.dataset.chk,i=+b.dataset.i,e=E(k),sets=exSets(k),x=sets[i];
     x.done=!x.done;
     if(x.done){
       if(x.reps==='')x.reps=String(e.reps);
       const dd=getDraft();if(!dd.startedAt)dd.startedAt=Date.now();
       if(e.t==='kg'&&x.kg===''){const L=lastFor(k);const v=L&&L.sets[0].kg!=null?String(L.sets[0].kg):'';sets.forEach(z=>{if(z.kg==='')z.kg=v})}
       const nextIdx=sets.findIndex(z=>!z.done);
-      let label;if(nextIdx>=0)label=e.n+' · set '+(nextIdx+1);else{const list=PROGRAMS[prog].days[day].ex.filter(z=>!(noLegs&&LIB[z].leg));const n=list[list.indexOf(k)+1];label=n?LIB[n].n:'Son hareket bitti'}
+      let label;if(nextIdx>=0)label=e.n+' · set '+(nextIdx+1);else{const list=curList();const n=list[list.indexOf(k)+1];label=n?LIB[n].n:'Son hareket bitti'}
       const sup=e.ss&&nextIdx>=0;
-      startRest(sup?20:e.rest,sup?LIB[e.ss].n+' (süper set)':label);
+      startRest(sup?settings.ss:restFor(e),sup?LIB[e.ss].n+' (süper set)':label);
     }
     saveDrafts();const card=$('#ex-'+k);if(card){card.outerHTML=exCard(k);mountAnims()}
-    const f=$('#finish');if(f){const list=PROGRAMS[prog].days[day].ex.filter(z=>!(noLegs&&LIB[z].leg));f.textContent=`Antrenmanı bitir · ${list.reduce((n,z)=>n+exSets(z).filter(q=>q.done).length,0)}/${list.reduce((n,z)=>n+LIB[z].s,0)} set`}
+    const f=$('#finish');if(f){const list=curList();f.textContent=`Antrenmanı bitir · ${list.reduce((n,z)=>n+exSets(z).filter(q=>q.done).length,0)}/${list.reduce((n,z)=>n+E(z).s,0)} set`}
     return;
   }
   if(b.id==='finish'){finish();return}
@@ -728,7 +961,8 @@ document.addEventListener('input',ev=>{
 document.addEventListener('focusout',()=>{setTimeout(()=>{const a=document.activeElement;if(pendingRender&&!(a&&a.tagName==='INPUT'))render()},50)});
 
 /* ---------- Boot ---------- */
-mode='local';loadLocal();render();
+mode='local';loadLocal();applyTheme();render();
+try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',applyTheme)}catch(e){}
 document.addEventListener('change',ev=>{if(ev.target.id==='imp'&&ev.target.files[0]){importData(ev.target.files[0]);ev.target.value=''}});
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
 })();
