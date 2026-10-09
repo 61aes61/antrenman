@@ -278,6 +278,13 @@ details.how summary{font-size:.88rem}
 .pcap{margin:0 12px 8px;background:rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;text-align:center;font-weight:600}
 .player video{width:100%;height:100%;object-fit:contain;background:#000;min-height:0}
 .pcredit{color:#aaa;font-size:.75rem;text-align:center;padding:8px}
+
+.pchart{border-top:1px dashed var(--line);padding-top:8px;display:grid;gap:6px}
+.pc-h{display:flex;justify-content:space-between;align-items:baseline}
+.pc-h span{font-size:.78rem;color:var(--muted)}
+.pc-s{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.pc-s b{color:var(--ink)}
+.pchart svg{width:100%;height:auto;display:block}
 </style>
 </head>
 <body>
@@ -437,6 +444,7 @@ function exCard(k){
     <div class="dhead">${thumb(k)}<div class="dt"><div class="chips"><span class="pill${e.leg?' leg':''}">${esc(e.r)}</span>${e.ss?`<span class="pill ss">Süper set · ${esc(LIB[e.ss].n)}</span>`:''}</div><h3>${esc(e.n)}</h3><div class="meta">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}${e.per?' · '+esc(e.per):''} · ${doneN}/${e.s} set${hint}</div></div></div>
     ${wrow}<div class="sets">${hdr}${rows}</div>
     ${video}
+    ${progChart(k)}
     ${howTo(k)}
   </article>`;
 }
@@ -449,6 +457,28 @@ function openPlayer(k){
   v.play().catch(()=>{});
 }
 function closePlayer(){document.querySelectorAll('.player').forEach(p=>{clearInterval(p._iv);const v=p.querySelector('video');if(v){v.pause();v.removeAttribute('src');v.load()}p.remove()})}
+function progChart(k){
+  const e=LIB[k],kg=e.t==='kg';
+  const pts=[...sessions].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)).map(s=>{const a=s.ex&&s.ex[k];if(!a)return null;const b=bestOf(e,a.filter(z=>z.done));if(!b)return null;const v=kg?b.kg:b.reps;return v==null?null:{d:s.date,v,r:b.reps}}).filter(Boolean).slice(-12);
+  const unit=kg?(e.unit||'kg'):e.t==='sn'?'sn':'tekrar';
+  if(!pts.length)return `<div class="pchart"><div class="pc-h"><b>İlerleme</b></div><p class="note">Bu hareketi kaydettikçe ${kg?'kilonun':'tekrarının'} nasıl arttığı burada grafik olarak görünecek.</p></div>`;
+  const best=Math.max(...pts.map(p=>p.v)),first=pts[0].v,last=pts[pts.length-1].v,diff=Math.round((last-first)*10)/10;
+  let svg='';
+  if(pts.length>1){
+    const W=300,H=96,pl=30,pr=10,pt=10,pb=20;let lo=Math.min(...pts.map(p=>p.v)),hi=best;if(hi===lo){lo-=1;hi+=1}
+    const X=i=>pl+(W-pl-pr)*i/(pts.length-1),Y=v=>pt+(H-pt-pb)*(1-(v-lo)/(hi-lo));
+    const line=pts.map((p,i)=>X(i).toFixed(1)+','+Y(p.v).toFixed(1)).join(' ');
+    svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(e.n)} ilerleme grafiği">
+      <line x1="${pl}" x2="${W-pr}" y1="${Y(hi)}" y2="${Y(hi)}" style="stroke:var(--line)"/><line x1="${pl}" x2="${W-pr}" y1="${Y(lo)}" y2="${Y(lo)}" style="stroke:var(--line)"/>
+      <text x="${pl-5}" y="${Y(hi)+4}" text-anchor="end" font-size="10" style="fill:var(--muted)">${fmtN(hi)}</text><text x="${pl-5}" y="${Y(lo)+4}" text-anchor="end" font-size="10" style="fill:var(--muted)">${fmtN(lo)}</text>
+      <path d="M${X(0)},${Y(lo)} L${line.split(' ').join(' L')} L${X(pts.length-1)},${Y(lo)} Z" style="fill:var(--accent);opacity:.14"/>
+      <polyline points="${line}" fill="none" style="stroke:var(--accent)" stroke-width="2.2" stroke-linejoin="round"/>
+      ${pts.map((p,i)=>`<circle cx="${X(i)}" cy="${Y(p.v)}" r="${i===pts.length-1?4:2.5}" style="fill:${p.v===best?'var(--warn)':'var(--accent)'}"/>`).join('')}
+      <text x="${pl}" y="${H-4}" font-size="10" style="fill:var(--muted)">${esc(fmtD(pts[0].d))}</text><text x="${W-pr}" y="${H-4}" font-size="10" text-anchor="end" style="fill:var(--muted)">${esc(fmtD(pts[pts.length-1].d))}</text></svg>`;
+  }
+  return `<div class="pchart"><div class="pc-h"><b>İlerleme</b><span>${pts.length} antrenman</span></div>
+    <div class="pc-s"><span>Rekor <b>${fmtN(best)} ${unit}</b></span><span>Son <b>${fmtN(last)} ${unit}</b></span>${pts.length>1?`<span>Fark <b style="color:${diff>0?'var(--good)':'var(--ink)'}">${diff>0?'+':''}${fmtN(diff)}</b></span>`:''}</div>${svg}</div>`;
+}
 function mountAnims(){
   if(window.ExAnim)document.querySelectorAll('[data-anim]:not([data-on])').forEach(el=>ExAnim.mount(el,el.dataset.anim));
   document.querySelectorAll('[data-vid]:not([data-on])').forEach(el=>{el.dataset.on='1';const k=el.dataset.vid,cap=el.querySelector('.vcap'),v=el.querySelector('video'),cues=window.ExAnim?ExAnim.cues(k):[];let i=0;
