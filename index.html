@@ -250,6 +250,17 @@ details.how summary{font-size:.88rem}
 .bar .track{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}
 .bar .track i{display:block;height:100%;background:var(--accent);border-radius:4px}
 .bar b{text-align:right;font-variant-numeric:tabular-nums}
+
+.wrow{display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:12px;align-items:center;background:var(--surface2);border-radius:10px;padding:8px 10px}
+.wrow label{font-weight:700;display:grid;gap:1px}
+.wrow small{font-weight:500;font-size:.78rem;color:var(--muted)}
+.wrow .field input.big{font:700 1.2rem var(--body);text-align:center;padding:8px 34px 8px 8px}
+.set,.set.bw{grid-template-columns:24px 70px minmax(0,1fr) 44px}
+.vbox{position:relative;border-radius:12px;background:var(--surface2);overflow:hidden;cursor:pointer;border:1px solid var(--line)}
+.vbox canvas{display:block;height:160px;width:auto;max-width:100%;aspect-ratio:260/215;margin:0 auto}
+.vcap{border-top:1px solid var(--line);color:var(--ink);font-weight:600;font-size:.86rem;text-align:center;padding:7px 10px;background:var(--surface)}
+.vhint{position:absolute;top:6px;right:8px;font-size:.66rem;color:var(--muted)}
+.vbox.paused .vhint::after{content:" · durdu"}
 </style>
 </head>
 <body>
@@ -263,6 +274,7 @@ details.how summary{font-size:.88rem}
   <button role="tab" data-tab="kilo" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 7-9"/><path d="M20 6v4M20 6h-4"/></svg>Kilo</button>
 </div></nav>
 
+<script src="anim.js"></script>
 <script>
 (function(){
 /* ---------- Program ---------- */
@@ -295,7 +307,7 @@ const LIB={
 const PROGRAMS={
   salon:{name:'Salon',days:{A:{title:'Göğüs ağırlıklı',ex:['squat','bench','incline','csrow','lateral','curl','pushdown','plank']},B:{title:'Sırt ağırlıklı',ex:['rdl','pulldown','seatedrow','crossover','ohp','hammer','ohext','legraise']}},cardio:true,
     note:'Isın: 5 dk yürüyüş ya da bisiklet, sonra ilk hareketin hafif bir seti. Setler arası dinlenme süresi ✓ işaretleyince otomatik başlar.'},
-  ev:{name:'Ev · sabah',days:{A:{title:'Sabah A',ex:['pushup','bwsquat','bagrow','plank']},B:{title:'Sabah B',ex:['pike','lunge','bridge','ytw','deadbug']}},
+  ev:{name:'Ev · sabah',days:{A:{title:'Sabah 1',ex:['pushup','bwsquat','bagrow','plank']},B:{title:'Sabah 2',ex:['pike','lunge','bridge','ytw','deadbug']}},
     note:'3 dk ısın: kol çevirme, kedi-deve, kalça açma, 10 yavaş squat. Hareketleri tur halinde yap, 3 tur. Tükenmeye kadar gitme.'}
 };
 
@@ -338,6 +350,7 @@ function render(){
   $('#title').textContent=tab==='w'?'Antrenman Programı':tab==='karne'?'Karne':tab==='hist'?'Geçmiş':'Kilo Takibi';
   $('#main').innerHTML=tab==='w'?workoutView():tab==='karne'?karneView():tab==='hist'?histView():kiloView();
   if(tab==='kilo')drawChart();
+  mountAnims();
 }
 function softRender(){const a=document.activeElement;if(a&&a.tagName==='INPUT'&&$('#main').contains(a)){pendingRender=true;return}render()}
 
@@ -351,7 +364,8 @@ function progIcon(k){
   return `<svg class="prog" viewBox="0 0 38 38" role="img" aria-label="${n}/${e.s} set"><circle cx="19" cy="19" r="15" style="stroke:var(--line)"/>${n?`<circle cx="19" cy="19" r="15" style="stroke:var(--accent)" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 19 19)" stroke-linecap="round"/>`:''}<text x="19" y="23.5" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--muted)">${n}/${e.s}</text></svg>`;
 }
 function exRow(k){const e=LIB[k];return `<button type="button" class="exrow" data-open="${k}">${thumb(k)}<span class="txt"><span class="nm">${esc(e.n)}</span><span class="rg"><span class="sr">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}</span> · ${esc(e.r)}</span></span>${progIcon(k)}</button>`}
-function planName(p,d){return (p==='salon'?'Salon ':'Ev ')+d}
+function dayNo(d){return d==='B'?2:1}
+function planName(p,d){return (p==='salon'?'Salon ':'Ev ')+dayNo(d)}
 function workoutView(){
   if(!day)day=nextDay(prog);
   if(openEx&&curList().includes(openEx))return detailView(openEx);
@@ -359,7 +373,7 @@ function workoutView(){
   const P=PROGRAMS[prog],d=getDraft(),list=curList();
   const nd=nextDay(prog),sub={salon:{A:'Göğüs',B:'Sırt'},ev:{A:'',B:''}}[prog];
   let h=`<div class="switch"><div class="mseg" role="group" aria-label="Program">${Object.entries(PROGRAMS).map(([pk,PP])=>`<button type="button" data-prog="${pk}" aria-pressed="${prog===pk}">${pk==='salon'?'Salon':'Ev'}</button>`).join('')}</div>
-  <div class="dseg" role="group" aria-label="Gün">${['A','B'].map(x=>`<button type="button" data-day="${x}" aria-pressed="${day===x}">Gün ${x}${sub[x]?' · '+sub[x]:''}${nd===x?'<i>Sıradaki</i>':''}</button>`).join('')}</div></div>
+  <div class="dseg" role="group" aria-label="Gün">${['A','B'].map(x=>`<button type="button" data-day="${x}" aria-pressed="${day===x}">Gün ${dayNo(x)}${sub[x]?' · '+sub[x]:''}${nd===x?'<i>Sıradaki</i>':''}</button>`).join('')}</div></div>
   <details class="notes"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 20h20z" style="fill:var(--warn)"/><path d="M12 9v5" style="stroke:var(--bg)" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17" r="1.3" style="fill:var(--bg)"/></svg>Antrenman Notları<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="nb"><p class="note">${esc(P.note)}</p><p class="note">Bir harekete dokun, setlerini orada işaretle. Mavi kutudaki hareketler süper set: arka arkaya yapılır.</p></div></details>
   <label class="toggle" for="noleg"><input type="checkbox" id="noleg" ${noLegs?'checked':''}> Bugün bacak yok</label>
   <h2 class="hh">Hareketler</h2><div class="list">`;
@@ -385,19 +399,24 @@ function exCard(k){
   let hint='';
   if(L&&L.sets.length>=e.s&&L.sets.every(x=>num(x.reps)>=e.reps))hint=` <span class="up">↑ ${kg?'Ağırlığı artır':e.t==='sn'?'Süreyi uzat':'Zorlaştır'}</span>`;
   const doneN=sets.filter(x=>x.done).length;
-  const hdr=`<div class="set hdr${kg?'':' bw'}"><span>SET</span><span>ÖNCEKİ</span>${kg?`<span>${esc((e.unit||'kg').toLocaleUpperCase('tr-TR'))}</span>`:''}<span>${e.t==='sn'?'SN':'TEKRAR'}</span><span></span></div>`;
+  const lastKg=L&&kg?L.sets[0].kg:null;
+  const wrow=kg?`<div class="wrow"><label for="kgx-${k}">Ağırlık<small>${lastKg!=null?'Geçen sefer '+esc(fmtN(lastKg))+' '+esc(e.unit||'kg'):'Tüm setler için'}</small></label><div class="field"><input class="in big" id="kgx-${k}" data-k="${k}" data-f="kgall" inputmode="decimal" value="${esc(sets[0].kg)}" placeholder="${lastKg!=null?esc(fmtN(lastKg)):'0'}" aria-label="Ağırlık"><span>${esc(e.unit||'kg')}</span></div></div>`:'';
+  const hdr=`<div class="set hdr"><span>SET</span><span>ÖNCEKİ</span><span>${e.t==='sn'?'SÜRE (SN)':'TEKRAR'}</span><span></span></div>`;
   const rows=sets.map((x,i)=>{
     const p=pa&&pa[i]&&pa[i].done?pa[i]:null;
     const pv=p?((kg&&p.kg!=null?fmtN(p.kg)+'×':'')+(p.reps==null?'?':p.reps)):'–';
-    return `<div class="set${kg?'':' bw'}${x.done?' done':''}"><span class="sn">${i+1}</span><span class="pv">${esc(pv)}</span>${kg?`<input class="in" id="kg-${k}-${i}" data-k="${k}" data-i="${i}" data-f="kg" inputmode="decimal" value="${esc(x.kg)}" placeholder="${p&&p.kg!=null?esc(fmtN(p.kg)):'–'}" aria-label="Set ${i+1} kilo">`:''}<input class="in" id="r-${k}-${i}" data-k="${k}" data-i="${i}" data-f="reps" inputmode="numeric" value="${esc(x.reps)}" placeholder="${e.reps}" aria-label="Set ${i+1} ${e.t==='sn'?'saniye':'tekrar'}"><button type="button" class="chk" data-chk="${k}" data-i="${i}" aria-pressed="${x.done}" aria-label="Set ${i+1} tamam">✓</button></div>`;
+    return `<div class="set${x.done?' done':''}"><span class="sn">${i+1}</span><span class="pv">${esc(pv)}</span><input class="in" id="r-${k}-${i}" data-k="${k}" data-i="${i}" data-f="reps" inputmode="numeric" value="${esc(x.reps)}" placeholder="${e.reps}" aria-label="Set ${i+1} ${e.t==='sn'?'saniye':'tekrar'}"><button type="button" class="chk" data-chk="${k}" data-i="${i}" aria-pressed="${x.done}" aria-label="Set ${i+1} tamam">✓</button></div>`;
   }).join('');
+  const video=window.ExAnim&&ExAnim.has(k)?`<div class="vbox" data-anim="${k}" role="img" aria-label="${esc(e.n)} hareket animasyonu"><canvas></canvas><div class="vcap"></div><span class="vhint">Durdurmak için dokun</span></div>`:'';
   return `<article class="ex${doneN===e.s?' complete':''}" id="ex-${k}">
     <div class="dhead">${thumb(k)}<div class="dt"><div class="chips"><span class="pill${e.leg?' leg':''}">${esc(e.r)}</span>${e.ss?`<span class="pill ss">Süper set · ${esc(LIB[e.ss].n)}</span>`:''}</div><h3>${esc(e.n)}</h3><div class="meta">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}${e.per?' · '+esc(e.per):''} · ${doneN}/${e.s} set${hint}</div></div></div>
-    <div class="sets">${hdr}${rows}</div>
+    ${wrow}<div class="sets">${hdr}${rows}</div>
+    ${video}
     ${howTo(k)}
   </article>`;
 }
-function howTo(k){const e=LIB[k];return `<details class="how"><summary>Nasıl yapılır · video</summary><ul>${e.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><a class="vid" href="${yt(e.q)}" target="_blank" rel="noopener">Videoyu YouTube'da izle</a></details>`}
+function mountAnims(){if(!window.ExAnim)return;document.querySelectorAll('[data-anim]:not([data-on])').forEach(el=>ExAnim.mount(el,el.dataset.anim))}
+function howTo(k){const e=LIB[k];return `<details class="how"><summary>Nasıl yapılır · YouTube</summary><ul>${e.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><a class="vid" href="${yt(e.q)}" target="_blank" rel="noopener">Videoyu YouTube'da izle</a></details>`}
 
 function libView(){
   let h='<h2>Hareketler</h2><p class="note">Her hareketin doğru formu ve video bağlantısı. Video YouTube\'da açılır.</p>';
@@ -415,7 +434,7 @@ function histView(){
     const P=PROGRAMS[x.program]||{name:x.program};
     const keys=Object.keys(x.ex||{}).filter(k=>x.ex[k].some(z=>z.done));
     const lines=keys.map(k=>{const e=LIB[k]||{n:k,t:'kg'};const sets=x.ex[k].filter(z=>z.done).map(z=>(e.t==='kg'&&z.kg!=null&&z.kg!==''?fmtN(z.kg)+'×':'')+z.reps).join(', ');return `<li><b>${esc(e.n)}</b><span>${esc(sets)}${e.t==='sn'?' sn':''}</span></li>`}).join('');
-    return `<details class="sess"><summary><span>${esc(fmtD(x.date))}</span><span><span class="daychip">${esc(P.name)} ${esc(x.day)}</span></span></summary>
+    return `<details class="sess"><summary><span>${esc(fmtD(x.date))}</span><span><span class="daychip">${esc(planName(x.program,x.day))}</span></span></summary>
       <ul>${lines}${x.cardio?`<li><b>Eğimli yürüyüş</b><span>${esc(x.cardio)} dk</span></li>`:''}${x.noLegs?'<li><b>Not</b><span>Bacak yapılmadı</span></li>':''}</ul>
       <div class="row" style="justify-content:flex-start"><button class="ghost" data-sum="${esc(x.id)}">Özeti gör</button><button class="ghost danger" data-del="${esc(x.id)}">${pendingDel===x.id?'Silmek için tekrar dokun':'Bu antrenmanı sil'}</button></div></details>`}).join('');
 }
@@ -598,13 +617,13 @@ document.addEventListener('click',async ev=>{
     if(x.done){
       if(x.reps==='')x.reps=String(e.reps);
       const dd=getDraft();if(!dd.startedAt)dd.startedAt=Date.now();
-      if(e.t==='kg'&&x.kg===''){const prev=i>0?sets[i-1].kg:'';const L=lastFor(k);const pa=L?L.s.ex[k]:null;const pk=pa&&pa[i]&&pa[i].done&&pa[i].kg!=null?String(pa[i].kg):(L&&L.sets[0].kg!=null?String(L.sets[0].kg):'');x.kg=prev!==''?prev:pk}
+      if(e.t==='kg'&&x.kg===''){const L=lastFor(k);const v=L&&L.sets[0].kg!=null?String(L.sets[0].kg):'';sets.forEach(z=>{if(z.kg==='')z.kg=v})}
       const nextIdx=sets.findIndex(z=>!z.done);
       let label;if(nextIdx>=0)label=e.n+' · set '+(nextIdx+1);else{const list=PROGRAMS[prog].days[day].ex.filter(z=>!(noLegs&&LIB[z].leg));const n=list[list.indexOf(k)+1];label=n?LIB[n].n:'Son hareket bitti'}
       const sup=e.ss&&nextIdx>=0;
       startRest(sup?20:e.rest,sup?LIB[e.ss].n+' (süper set)':label);
     }
-    saveDrafts();const card=$('#ex-'+k);if(card){card.outerHTML=exCard(k)}
+    saveDrafts();const card=$('#ex-'+k);if(card){card.outerHTML=exCard(k);mountAnims()}
     const f=$('#finish');if(f){const list=PROGRAMS[prog].days[day].ex.filter(z=>!(noLegs&&LIB[z].leg));f.textContent=`Antrenmanı bitir · ${list.reduce((n,z)=>n+exSets(z).filter(q=>q.done).length,0)}/${list.reduce((n,z)=>n+LIB[z].s,0)} set`}
     return;
   }
@@ -620,7 +639,8 @@ document.addEventListener('change',ev=>{if(ev.target.id==='noleg'){noLegs=ev.tar
 let saveT=null;
 document.addEventListener('input',ev=>{
   const t=ev.target;
-  if(t.dataset.f){const sets=exSets(t.dataset.k);sets[+t.dataset.i][t.dataset.f]=t.value}
+  if(t.dataset.f==='kgall'){exSets(t.dataset.k).forEach(x=>x.kg=t.value)}
+  else if(t.dataset.f){const sets=exSets(t.dataset.k);sets[+t.dataset.i][t.dataset.f]=t.value}
   else if(t.id==='cardio'){getDraft().cardio=t.value}
   else return;
   clearTimeout(saveT);saveT=setTimeout(saveDrafts,300);

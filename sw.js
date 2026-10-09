@@ -1,7 +1,7 @@
 // Sürümü her güncellemede artır: telefon yeni dosyaları bu sayede indirir.
-const VERSION = 'v3';
+const VERSION = 'v4';
 const CACHE = 'antrenman-' + VERSION;
-const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png'];
+const FILES = ['./', './index.html', './manifest.webmanifest', './anim.js', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
