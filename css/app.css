@@ -332,3 +332,12 @@ details.how summary{font-size:.88rem}
 .player.wu .note,.player.wu .lbl,.player.wu .sub{color:#bbb}
 .wu-done{display:grid;gap:14px;justify-items:center;width:100%;max-width:360px}
 .wu-done b{font-size:1.6rem}
+
+/* ---- giriş ---- */
+body.nologin .tabs{display:none}
+.login{display:grid;justify-items:center;text-align:center;gap:14px;padding:30px 8px}
+.login img{border-radius:20px}
+.login .ghost{padding:11px 16px}
+.gbtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:320px;padding:13px 16px;border-radius:10px;border:1px solid var(--line);background:#fff;color:#1f1f1f;font:600 1rem var(--body);cursor:pointer}
+.gbtn:disabled{opacity:.6}
+.note.small{font-size:.78rem}

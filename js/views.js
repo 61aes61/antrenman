@@ -9,6 +9,8 @@ function render(){
   const TT={home:'Set Defteri',w:'Antrenman Programı',kardiyo:'Kardiyo',beslenme:'Beslenme',karne:'Karne',hist:'Geçmiş'};
   if(!TT[tab])tab='home';
   $('#title').textContent=TT[tab];
+  document.body.classList.toggle('nologin',needLogin());
+  if(needLogin()){$('#title').textContent='Set Defteri';$('#main').innerHTML=loginView();return}
   $('#main').innerHTML=tab==='home'?homeView():tab==='w'?workoutView():tab==='kardiyo'?soonView('Kardiyo','Yürüyüş, koşu ve bisiklet kayıtların burada olacak.'):tab==='beslenme'?soonView('Beslenme','Öğünlerin ve günlük protein, karbonhidrat, yağ, kalori takibin burada olacak.'):tab==='karne'?karneView()+'<h2 class="hh">Kilo</h2>'+kiloView():histView();
   if(tab==='karne')drawChart();
   mountAnims();
@@ -244,6 +246,7 @@ function settingsHTML(){
   const seg=(id,label,opts)=>`<div class="srow"><span>${label}</span><div class="sseg">${opts.map(([v,t])=>`<button type="button" data-opt="${id}" data-v="${v}" aria-pressed="${String(settings[id])===String(v)}">${t}</button>`).join('')}</div></div>`;
   return `<div class="sheet" role="dialog" aria-modal="true" aria-label="Ayarlar"><div class="sheet-in">
     <div class="row"><h2 class="sh">Ayarlar</h2><button type="button" class="ghost" data-close="1">Kapat</button></div>
+    ${accountHTML()}
     <section class="panel"><span class="lbl">Hedef</span>${step('goal','Haftalık antrenman',settings.goal,'gün')}</section>
     <section class="panel"><span class="lbl">Dinlenme süreleri</span>
       ${step('restBig','Ana hareketler',settings.restBig,'sn')}${step('restMid','Orta hareketler',settings.restMid,'sn')}${step('restIso','Küçük hareketler',settings.restIso,'sn')}${step('ss','Süper set arası',settings.ss,'sn')}</section>
@@ -263,7 +266,7 @@ function homeView(){
   const w=[...weights].sort((a,b)=>a.date<b.date?-1:1),wl=w[w.length-1],w0=w[0];
   const hr=new Date().getHours(),greet=hr<12?'Günaydın':hr<18?'İyi günler':'İyi akşamlar';
   const days=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map((t,i)=>{const s0=ws+i*864e5,has=sessions.some(s=>(s.createdAt||0)>=s0&&(s.createdAt||0)<s0+864e5),isT=weekStart(Date.now())===ws&&((new Date().getDay()+6)%7)===i;return `<span class="wd${has?' on':''}${isT?' today':''}">${t}</span>`}).join('');
-  return `<div class="hrow"><span class="greet">${greet}</span><button type="button" class="iconbtn" data-settings="1" aria-label="Ayarlar"><svg viewBox="0 0 24 24" width="22" height="22" style="fill:none;stroke:currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
+  return `<div class="hrow"><span class="greet">${greet}${firstName()?', '+esc(firstName()):''}</span><button type="button" class="iconbtn" data-settings="1" aria-label="Ayarlar"><svg viewBox="0 0 24 24" width="22" height="22" style="fill:none;stroke:currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
   <section class="panel goal">
     <svg class="gring" viewBox="0 0 100 100" role="img" aria-label="Bu hafta ${wc} / ${goal} antrenman"><circle cx="50" cy="50" r="42" style="fill:none;stroke:var(--line)" stroke-width="9"/><circle cx="50" cy="50" r="42" style="fill:none;stroke:${wc>=goal?'var(--good)':'var(--accent)'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle" font-size="22" font-weight="700" style="fill:var(--ink)">${wc}/${goal}</text></svg>
     <div class="gtxt"><b>${wc>=goal?'Haftalık hedef tamam':'Bu hafta '+(goal-wc)+' antrenman kaldı'}</b><span class="sub">${st?`<svg viewBox="0 0 24 24" width="14" height="14" style="fill:var(--warn);vertical-align:-2px"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-4 2-5 0 2 1 3 2 3 0-4-1-6 1-9z"/></svg> ${st} hafta üst üste hedef`:'Hedefi tuttur, seri başlasın'}</span><div class="wdays">${days}</div></div>
