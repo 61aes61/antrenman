@@ -1,14 +1,19 @@
 # Set Defteri
 
-Telefonda ana ekrana eklenen kişisel antrenman uygulaması (web uygulaması / PWA).
+Telefonda ana ekrana eklenen kişisel antrenman uygulaması (web uygulaması / PWA). Yayın: GitHub Pages.
 
 ## Dosyalar
-- `index.html` — uygulamanın tamamı. Program ve hareketler en üstteki `LIB` ve `PROGRAMS` bölümünde.
-- `sw.js` — internetsiz açılma. **Her güncellemede `VERSION` değerini artır** (v1 → v2), yoksa telefon eski sürümü göstermeye devam edebilir.
-- `manifest.webmanifest`, `icons/` — ana ekran adı ve simgesi.
+- `index.html` — sayfa iskeleti ve alt menü.
+- `css/app.css` — tüm stiller; renkler en üstteki `:root` değişkenlerinde.
+- `js/util.js` — küçük yardımcılar (biçimlendirme, tarayıcı hafızası).
+- `js/data.js` — hareket kütüphanesi (`LIB`), varsayılan programlar, videolar, alternatifler, ısınma adımları.
+- `js/state.js` — kullanıcının programı, ayarlar, taslak antrenman, kayıtlar ve yedekleme.
+- `js/views.js` — tüm ekranlar (ana sayfa, antrenman, hareket, karne, geçmiş, ayarlar, özet).
+- `js/timer.js` — dinlenme sayacı ve ısınma.
+- `js/actions.js` — antrenmanı kaydetme ve dokunma olayları.
+- `js/boot.js` — açılış.
+- `anim.js` — hareket çizim animasyonları.
+- `sw.js` — internetsiz açılma. **Her güncellemede `VERSION` değerini artır.**
 
 ## Kayıtlar
-Antrenmanlar ve kilo telefonun tarayıcı hafızasında (localStorage) durur. Geçmiş sekmesinden JSON yedeği indirilip geri yüklenebilir.
-
-## Yayın
-GitHub Pages: Settings → Pages → Branch: `main`, klasör: `/ (root)`.
+Telefonun tarayıcı hafızasında (localStorage) durur. Geçmiş sekmesinden JSON yedeği alınıp geri yüklenebilir.
