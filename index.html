@@ -266,6 +266,18 @@ details.how summary{font-size:.88rem}
 .vov{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(0,0,0,.62);color:#fff;border:0;border-radius:8px;padding:5px 10px}
 .vswap{position:absolute;top:6px;left:6px;border:0;border-radius:99px;background:rgba(0,0,0,.6);color:#fff;font:600 .72rem var(--body);padding:4px 10px;cursor:pointer}
 .credit{font-size:.72rem;color:var(--muted);justify-self:end;margin-top:-4px}
+
+.vthumb{position:relative;display:block;width:100%;height:150px;border:0;padding:0;background:#000;cursor:pointer;overflow:hidden;color:#fff}
+.vthumb img{width:100%;height:100%;object-fit:cover;opacity:.7;display:block}
+.vthumb .pbtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.92);color:#111;display:grid;place-items:center;padding-left:4px}
+.vthumb .vlbl{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-weight:700;font-size:.9rem;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.player{position:fixed;inset:0;z-index:60;background:#000;color:#fff;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.ptop{display:flex;align-items:center;gap:12px;padding:10px 12px}
+.ptop b{font-size:1rem}
+.pclose{border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:99px;padding:6px 12px;font:600 .9rem var(--body);cursor:pointer}
+.pcap{margin:0 12px 8px;background:rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;text-align:center;font-weight:600}
+.player video{width:100%;height:100%;object-fit:contain;background:#000;min-height:0}
+.pcredit{color:#aaa;font-size:.75rem;text-align:center;padding:8px}
 </style>
 </head>
 <body>
@@ -418,7 +430,8 @@ function exCard(k){
   }).join('');
   const hasAnim=window.ExAnim&&ExAnim.has(k),V=VIDEOS[k],showVid=V&&(vmode==='video'||!hasAnim);
   const swap=V&&hasAnim?`<button type="button" class="vswap" data-vmode="${showVid?'cizim':'video'}">${showVid?'Çizime geç':'Videoya geç'}</button>`:'';
-  const video=showVid?`<div class="vbox real" data-vid="${k}"><video src="${esc(V.u)}" muted loop playsinline autoplay preload="auto" aria-label="${esc(e.n)} videosu"></video><div class="vcap vov"></div>${swap}</div><a class="credit" href="${esc(V.p)}" target="_blank" rel="noopener">Video: Pexels</a>`
+  const vid=V?(V.p.match(/-(\d+)\/?$/)||[])[1]:'';
+  const video=showVid?`<div class="vbox real"><button type="button" class="vthumb" data-play="${k}" aria-label="${esc(e.n)} videosunu tam ekran oynat"><img src="https://images.pexels.com/videos/${vid}/pexels-photo-${vid}.jpeg?auto=compress&w=640" alt="" onerror="this.remove()"><span class="pbtn" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vlbl">Videoyu izle</span></button>${swap}</div><a class="credit" href="${esc(V.p)}" target="_blank" rel="noopener">Video: Pexels</a>`
     :hasAnim?`<div class="vbox" data-anim="${k}" role="img" aria-label="${esc(e.n)} hareket animasyonu"><canvas></canvas><div class="vcap"></div><span class="vhint">Durdurmak için dokun</span>${swap}</div>`:'';
   return `<article class="ex${doneN===e.s?' complete':''}" id="ex-${k}">
     <div class="dhead">${thumb(k)}<div class="dt"><div class="chips"><span class="pill${e.leg?' leg':''}">${esc(e.r)}</span>${e.ss?`<span class="pill ss">Süper set · ${esc(LIB[e.ss].n)}</span>`:''}</div><h3>${esc(e.n)}</h3><div class="meta">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}${e.per?' · '+esc(e.per):''} · ${doneN}/${e.s} set${hint}</div></div></div>
@@ -427,6 +440,15 @@ function exCard(k){
     ${howTo(k)}
   </article>`;
 }
+function openPlayer(k){
+  const V=VIDEOS[k],e=LIB[k];if(!V)return;closePlayer();
+  document.body.insertAdjacentHTML('beforeend',`<div class="player" role="dialog" aria-modal="true" aria-label="${esc(e.n)} videosu"><div class="ptop"><button type="button" class="pclose" data-pclose="1">✕ Kapat</button><b>${esc(e.n)}</b></div><div class="pcap"></div><video src="${esc(V.u)}" controls autoplay playsinline loop preload="auto"></video><a class="pcredit" href="${esc(V.p)}" target="_blank" rel="noopener">Video: Pexels</a></div>`);
+  const pl=document.querySelector('.player'),v=pl.querySelector('video'),cap=pl.querySelector('.pcap'),cues=window.ExAnim?ExAnim.cues(k):[];let i=0;
+  if(cues.length){cap.textContent=cues[0];pl._iv=setInterval(()=>{i=(i+1)%cues.length;cap.textContent=cues[i]},3000)}else cap.hidden=true;
+  v.addEventListener('error',()=>{cap.hidden=false;cap.textContent='Video yüklenemedi. İnternet bağlantını kontrol et.'});
+  v.play().catch(()=>{});
+}
+function closePlayer(){document.querySelectorAll('.player').forEach(p=>{clearInterval(p._iv);const v=p.querySelector('video');if(v){v.pause();v.removeAttribute('src');v.load()}p.remove()})}
 function mountAnims(){
   if(window.ExAnim)document.querySelectorAll('[data-anim]:not([data-on])').forEach(el=>ExAnim.mount(el,el.dataset.anim));
   document.querySelectorAll('[data-vid]:not([data-on])').forEach(el=>{el.dataset.on='1';const k=el.dataset.vid,cap=el.querySelector('.vcap'),v=el.querySelector('video'),cues=window.ExAnim?ExAnim.cues(k):[];let i=0;
@@ -620,6 +642,8 @@ function karneView(){
 document.addEventListener('click',async ev=>{
   const b=ev.target.closest('button');if(!b){if(ev.target.classList&&ev.target.classList.contains('sheet'))closeSheet();return}
   if(b.dataset.close){closeSheet();return}
+  if(b.dataset.play){openPlayer(b.dataset.play);return}
+  if(b.dataset.pclose){closePlayer();return}
   if(b.dataset.vmode){vmode=b.dataset.vmode;lsSet('ad-vmode',vmode);const art=b.closest('article');if(art){const k=art.id.slice(3);art.outerHTML=exCard(k);mountAnims()}return}
   if(b.dataset.sum){const x=sessions.find(z=>z.id===b.dataset.sum);if(x)showSummary(x,sessions.filter(z=>(z.createdAt||0)<(x.createdAt||0)));return}
   if(b.dataset.plan){const [p,dd]=b.dataset.plan.split('-');prog=p;day=dd;lsSet('ad-prog',prog);openEx=null;saveErr='';render();return}
