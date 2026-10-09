@@ -1,5 +1,5 @@
 // Sürümü her güncellemede artır: telefon yeni dosyaları bu sayede indirir.
-const VERSION = 'v14';
+const VERSION = 'v15';
 const CACHE = 'antrenman-' + VERSION;
 const FILES = ['./', './index.html', './manifest.webmanifest', './anim.js', './css/app.css', './js/util.js', './js/data.js', './js/state.js', './js/cloud.js', './js/views.js', './js/timer.js', './js/actions.js', './js/boot.js', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png'];
 

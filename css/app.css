@@ -347,3 +347,4 @@ body.nologin .tabs{display:none}
 .lform label{display:grid;gap:4px}
 .lform input{font:500 1rem var(--body);padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);width:100%}
 .lform .primary{margin-top:4px}
+.lform .toggle{font-size:.92rem;font-weight:500}

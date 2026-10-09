@@ -47,13 +47,16 @@ async function loginSubmit(){
   if(!/^[a-z0-9_.]{3,20}$/.test(u)){authErr='Kullanıcı adı 3-20 karakter olmalı; harf, rakam, nokta ve alt çizgi kullanabilirsin.';render();keepLogin(u);return}
   if(p.length<6){authErr='Şifre en az 6 karakter olmalı.';render();keepLogin(u);return}
   if(loginMode==='signup'&&p!==p2){authErr='Şifreler aynı değil.';render();keepLogin(u);return}
+  const rem=!$('#lrem')||$('#lrem').checked;lsSet('ad-remember',rem);lsSet('ad-lastuser',rem?u:'');
   authErr='';signingIn=true;render();keepLogin(u);
   try{
+    await firebase.auth().setPersistence(rem?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION);
     if(loginMode==='signup'){const r=await firebase.auth().createUserWithEmailAndPassword(u+UDOMAIN,p);await r.user.updateProfile({displayName:u});fbUser=r.user;render()}
     else await firebase.auth().signInWithEmailAndPassword(u+UDOMAIN,p);
   }catch(e){authErr=authMsg(e);signingIn=false;render();keepLogin(u)}
 }
 function keepLogin(u){const el=$('#lu');if(el&&u)el.value=u}
+function rememberOn(){return lsGet('ad-remember',true)}
 async function signOutAll(){
   try{await firebase.auth().signOut()}catch(e){}
   ['ad-sessions','ad-weights','ad-plans','ad-settings','ad-drafts','ad-tab','ad-prog'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
@@ -96,9 +99,10 @@ function loginView(){
     <h2 class="sh">${su?'Hesap oluştur':'Set Defteri\'ne hoş geldin'}</h2>
     <div class="mseg" role="group" aria-label="Giriş türü"><button type="button" data-lmode="login" aria-pressed="${!su}">Giriş yap</button><button type="button" data-lmode="signup" aria-pressed="${su}">Kayıt ol</button></div>
     <form id="lform" class="lform" autocomplete="on">
-      <label for="lu"><span class="lbl">Kullanıcı adı</span><input id="lu" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ornek: eren61" required></label>
+      <label for="lu"><span class="lbl">Kullanıcı adı</span><input id="lu" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ornek: eren61" value="${esc(lsGet('ad-lastuser',''))}" required></label>
       <label for="lp"><span class="lbl">Şifre</span><input id="lp" type="password" name="password" autocomplete="${su?'new-password':'current-password'}" placeholder="en az 6 karakter" required></label>
       ${su?'<label for="lp2"><span class="lbl">Şifre (tekrar)</span><input id="lp2" type="password" autocomplete="new-password" required></label>':''}
+      <label class="toggle" for="lrem"><input type="checkbox" id="lrem" ${rememberOn()?'checked':''}> Beni hatırla</label>
       ${authErr?`<p class="msg err">${esc(authErr)}</p>`:''}
       <button type="submit" class="primary" ${signingIn?'disabled':''}>${signingIn?'Bekle…':su?'Kayıt ol':'Giriş yap'}</button>
     </form>
