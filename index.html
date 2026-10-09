@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Antrenman Defteri</title>
+<meta name="theme-color" content="#0E1412">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Antrenman">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: phone-first logbook. One narrow column, bottom tab bar, a rest-timer strip that rises above it. Dark-first for the gym floor. */
+:root{
+  --bg:#0E1412; --surface:#171F1C; --surface2:#1F2925; --ink:#E8EEEB; --muted:#95A29C; --line:#2A3531;
+  --accent:#86A2FF; --accent-ink:#0B1020; --accent-soft:#1D2742;
+  --good:#6FD3A0; --good-soft:#15301F; --warn:#F2B35B; --danger:#FF8A80;
+  --display:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;
+  --body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --tabh:64px;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#EEF1F0; --surface:#FFFFFF; --surface2:#F4F7F5; --ink:#15201B; --muted:#5B6862; --line:#D5DCD9;
+  --accent:#2A52C4; --accent-ink:#FFFFFF; --accent-soft:#E3E9FB;
+  --good:#1C7A4B; --good-soft:#DFF2E7; --warn:#9A5A00; --danger:#B3261E; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#EEF1F0; --surface:#FFFFFF; --surface2:#F4F7F5; --ink:#15201B; --muted:#5B6862; --line:#D5DCD9;
+  --accent:#2A52C4; --accent-ink:#FFFFFF; --accent-soft:#E3E9FB;
+  --good:#1C7A4B; --good-soft:#DFF2E7; --warn:#9A5A00; --danger:#B3261E; color-scheme:light}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;padding-inline:16px;padding-block:12px calc(var(--tabh) + 96px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
+#app{max-width:560px;margin:0 auto;display:grid;gap:14px}
+button{font-family:inherit;color:inherit}
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:700;font-size:1.9rem;line-height:1;margin:0;text-transform:uppercase;letter-spacing:.01em}
+.sub{color:var(--muted);font-size:.9rem}
+h2{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:6px 0 0;text-transform:uppercase;letter-spacing:.02em;text-wrap:balance}
+.lbl{font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:12px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;color:var(--muted);font:700 1.05rem var(--display);letter-spacing:.04em;text-transform:uppercase;padding:9px 6px;border-radius:7px;cursor:pointer;position:relative}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.seg .dsub{display:block;font:600 .72rem var(--body);letter-spacing:.02em;text-transform:none;color:var(--muted);margin-top:1px}
+.seg .next{color:var(--accent)}
+.seg button[aria-pressed="true"] .dsub,.seg button[aria-pressed="true"] .next{color:var(--bg);opacity:.8}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.toggle{display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;user-select:none}
+.toggle input{width:20px;height:20px;accent-color:var(--accent)}
+.note{font-size:.92rem;color:var(--muted);margin:0}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:10px}
+.ex.complete{border-color:var(--good)}
+.ex-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:start}
+.chips{display:flex;gap:6px;flex-wrap:wrap;grid-column:1/-1}
+.pill{font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--surface2);color:var(--muted);border:1px solid var(--line)}
+.pill.leg{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.pill.ss{background:transparent;color:var(--warn);border-color:var(--warn)}
+.ex h3{font-family:var(--display);font-weight:700;font-size:1.45rem;line-height:1.1;margin:0;min-width:0}
+.tgt{font-family:var(--display);font-weight:700;font-size:1.45rem;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tgt small{font:600 .75rem var(--body);color:var(--muted);display:block;text-align:right}
+.last{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums;margin:0}
+.up{display:inline-block;font-size:.78rem;font-weight:700;padding:1px 8px;border-radius:99px;background:var(--good-soft);color:var(--good);margin-left:4px;white-space:nowrap}
+.sets{display:grid;gap:6px}
+.set{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1fr) 52px;gap:8px;align-items:center}
+.set.bw{grid-template-columns:28px minmax(0,1fr) 52px}
+.set .sn{font-family:var(--display);font-weight:700;color:var(--muted);text-align:center;font-size:1.1rem}
+.field{position:relative;min-width:0}
+.field input{width:100%;font:600 1.1rem var(--body);font-variant-numeric:tabular-nums;padding:10px 40px 10px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);min-width:0}
+.field input::placeholder{color:var(--muted);opacity:.7}
+.field span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--muted);font-weight:600;pointer-events:none}
+.chk{height:44px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface2);font-size:1.3rem;font-weight:700;cursor:pointer;color:var(--muted)}
+.chk[aria-pressed="true"]{background:var(--good);border-color:var(--good);color:var(--bg)}
+.set.done input{border-color:var(--good-soft);background:var(--good-soft)}
+details.how{border-top:1px dashed var(--line);padding-top:8px}
+details.how summary{cursor:pointer;font-weight:600;color:var(--accent);font-size:.92rem;list-style:none}
+details.how summary::-webkit-details-marker{display:none}
+details.how summary::before{content:"+ "}
+details.how[open] summary::before{content:"– "}
+.how ul{margin:8px 0;padding-left:18px;display:grid;gap:4px;font-size:.95rem}
+.vid{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--ink);text-decoration:none;background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:.92rem}
+.vid::before{content:"";width:0;height:0;border-left:9px solid var(--danger);border-top:6px solid transparent;border-bottom:6px solid transparent}
+.primary{font:700 1.25rem var(--display);letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;padding:15px;cursor:pointer;width:100%}
+.primary:disabled{opacity:.5}
+.ghost{font:600 .9rem var(--body);background:transparent;border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer}
+.ghost.danger{color:var(--danger);border-color:var(--danger)}
+.msg{font-size:.92rem;color:var(--muted);margin:0}
+.msg.err{color:var(--danger)}
+.cardio{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:10px;align-items:center}
+.cardio b{font-family:var(--display);font-size:1.25rem}
+details.sess{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+details.sess summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;list-style:none;font-weight:600}
+details.sess summary::-webkit-details-marker{display:none}
+.daychip{font-family:var(--display);font-weight:700;background:var(--ink);color:var(--bg);border-radius:6px;padding:0 8px;letter-spacing:.04em;white-space:nowrap}
+.sess ul{margin:10px 0;padding:0;list-style:none;display:grid;gap:6px;font-variant-numeric:tabular-nums}
+.sess li{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line);padding-bottom:5px;font-size:.95rem}
+.sess li span{text-align:right;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:28px 14px;border:1px dashed var(--line);border-radius:14px}
+.lib{display:grid;gap:10px}
+.lib .ex h3{font-size:1.25rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{display:grid;gap:2px}
+.stat strong{font-family:var(--display);font-size:1.9rem;line-height:1;font-variant-numeric:tabular-nums}
+.chart svg{width:100%;height:auto;display:block}
+.wform{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:end}
+.wform label{display:grid;gap:4px;min-width:0}
+.wform input{font:600 1rem var(--body);padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.wlist{display:grid;gap:6px;margin:0;padding:0;list-style:none;font-variant-numeric:tabular-nums}
+.wlist li{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.x{border:0;background:transparent;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:2px 10px}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:30}
+.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);height:var(--tabh)}
+.tabs button{border:0;background:transparent;color:var(--muted);font:700 .78rem var(--body);letter-spacing:.04em;text-transform:uppercase;display:grid;place-items:center;align-content:center;gap:3px;cursor:pointer}
+.tabs button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-selected="true"]{color:var(--accent)}
+#rest{position:fixed;left:0;right:0;bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px));z-index:29;padding:0 12px 10px}
+#rest .card{max-width:536px;margin:0 auto;background:var(--ink);color:var(--bg);border-radius:14px;padding:10px 12px 12px;display:grid;gap:8px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+#rest .r1{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px}
+#rest-t{font-family:var(--display);font-weight:700;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums;min-width:64px}
+#rest-l{min-width:0;font-weight:600;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rest button{white-space:nowrap;border:1px solid currentColor;background:transparent;color:inherit;border-radius:8px;padding:6px 9px;font-weight:700;font-size:.85rem;cursor:pointer}
+#rest .bar{height:4px;border-radius:2px;background:color-mix(in srgb,var(--bg) 25%,transparent);overflow:hidden}
+#rest .bar i{display:block;height:100%;background:var(--accent);width:100%;transform-origin:left}
+#rest.ready .card{background:var(--good);color:var(--bg)}
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-weight:600;font-size:.95rem;z-index:40;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion: no-preference){.toast{animation:pop .2s ease-out}@keyframes pop{from{opacity:.3;transform:translate(-50%,-6px)}}}
+</style>
+</head>
+<body>
+
+<div id="app"><header class="top"><h1>Antrenman Defteri</h1><span class="sub" id="today"></span></header><main id="main"><p class="msg">Program yükleniyor…</p></main></div>
+<div id="rest" hidden><div class="card"><div class="r1"><span id="rest-t">1:30</span><span id="rest-l">Dinlenme</span><button type="button" data-act="rest-add">+30 sn</button><button type="button" data-act="rest-skip">Geç</button></div><div class="bar"><i id="rest-bar"></i></div></div></div>
+<nav class="tabs" aria-label="Bölümler"><div class="in" role="tablist">
+  <button role="tab" data-tab="w" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg>Antrenman</button>
+  <button role="tab" data-tab="lib" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z"/></svg>Hareketler</button>
+  <button role="tab" data-tab="hist" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Geçmiş</button>
+  <button role="tab" data-tab="kilo" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 7-9"/><path d="M20 6v4M20 6h-4"/></svg>Kilo</button>
+</div></nav>
+
+<script>
+(function(){
+/* ---------- Program ---------- */
+const LIB={
+  squat:{n:'Squat',r:'Ön bacak',t:'kg',s:4,reps:6,rest:120,leg:1,q:'barbell squat nasıl yapılır',tips:['Ayaklar omuz genişliğinde, parmak uçları hafif dışa dönük.','Kalçayı geri ve aşağı it, dizler ayak parmaklarının yönünde ilerlesin.','Uyluk yere paralel olana kadar in, göğsü dik ve sırtı düz tut.']},
+  bench:{n:'Bench press',r:'Göğüs',t:'kg',s:4,reps:6,rest:120,q:'bench press nasıl yapılır',tips:['Kürek kemiklerini geriye sıkıştırıp sehpaya bastır.','Barı göğsün alt kısmına indir; dirsekler gövdeyle yaklaşık 45° açı yapsın.','Ayaklar yerde sabit, kalça sehpadan kalkmasın.']},
+  incline:{n:'İncline dumbbell press',r:'Üst göğüs',t:'kg',s:3,reps:8,rest:90,q:'incline dumbbell press nasıl yapılır',tips:['Sehpayı 30-45° eğime ayarla.','Dumbbell\'ları göğsün üst hizasına kontrollü indir.','Yukarıda dirsekleri kilitlemeden bitir.']},
+  csrow:{n:'Göğüs destekli row',r:'Üst sırt',t:'kg',s:3,reps:10,rest:90,q:'chest supported dumbbell row nasıl yapılır',tips:['İncline sehpaya yüzüstü uzan, göğsün sehpaya yaslı kalsın.','İki dumbbell\'ı aynı anda, dirsekleri yana açarak çek.','Tepede kürek kemiklerini sık, belden güç alma.']},
+  lateral:{n:'Lateral raise',r:'Yan omuz',t:'kg',s:3,reps:12,rest:60,q:'dumbbell lateral raise nasıl yapılır',tips:['Hafif ağırlık seç, dirsekler hafif bükük kalsın.','Kolları omuz hizasına kadar yana kaldır, savurma.','İnişi 2 saniyede kontrollü yap.']},
+  curl:{n:'Biceps curl',r:'Biceps',t:'kg',s:2,reps:10,rest:60,ss:'pushdown',q:'ez bar biceps curl nasıl yapılır',tips:['Bar ya da EZ bar; dirsekler gövdeye yapışık kalsın.','Gövdeyi sallamadan kaldır.','Aşağıda kolu tam aç.']},
+  pushdown:{n:'Triceps pushdown',r:'Triceps',t:'kg',s:2,reps:12,rest:60,ss:'curl',q:'rope triceps pushdown nasıl yapılır',tips:['Halat ya da bar; dirsekler yanlarda sabit.','Aşağıda kolu tam açıp arka kolu sık.','Omuzları öne düşürme.']},
+  plank:{n:'Plank',r:'Karın',t:'sn',s:3,reps:45,rest:45,q:'plank nasıl yapılır doğru form',tips:['Dirsekler omuzların tam altında.','Vücut baştan topuğa düz bir çizgi; kalça düşmesin, kalkmasın.','Karnı ve kalçayı sık, nefesini tutma.']},
+  rdl:{n:'Romanian deadlift',r:'Arka bacak',t:'kg',s:3,reps:8,rest:120,leg:1,q:'romanian deadlift nasıl yapılır',tips:['Dizler hafif bükük ve sabit kalsın.','Kalçayı geriye iterek barı bacakların önünden kaydırarak indir.','Sırt düz; arka bacakta gerilmeyi hissedince kalçayı öne iterek kalk.']},
+  pulldown:{n:'Lat pulldown',r:'Kanat',t:'kg',s:4,reps:8,rest:120,q:'lat pulldown nasıl yapılır',tips:['Barı omuzdan biraz geniş tut.','Barı göğsün üstüne çek; dirsekleri aşağı ve geriye götür.','Gövdeyle geriye fazla yaslanma, sallanma.']},
+  seatedrow:{n:'Seated cable row',r:'Orta sırt',t:'kg',s:3,reps:10,rest:90,q:'seated cable row nasıl yapılır',tips:['Göğüs dik, gövde sabit.','Tutamağı göbeğe doğru çek, kürek kemiklerini sık.','Kolları uzatırken gövdeyle öne eğilme.']},
+  crossover:{n:'Cable crossover',r:'Alt göğüs',t:'kg',s:2,reps:12,rest:60,q:'high to low cable crossover nasıl yapılır',tips:['Makaraları yukarıya ayarla.','Kolları yukarıdan aşağıya, kalçanın önünde birleştir.','Hafif ağırlıkla çalış, sonda göğsü sık.']},
+  ohp:{n:'Dumbbell omuz press',r:'Ön omuz',t:'kg',s:3,reps:8,rest:90,q:'seated dumbbell shoulder press nasıl yapılır',tips:['Sırt destekli sehpada otur.','Dumbbell\'lar kulak hizasından başlasın.','Beli kavislendirme, yukarıda dumbbell\'ları çarpıştırma.']},
+  hammer:{n:'Hammer curl',r:'Biceps',t:'kg',s:2,reps:10,rest:60,ss:'ohext',q:'hammer curl nasıl yapılır',tips:['Avuç içleri birbirine baksın.','Dirsekler gövdenin yanında sabit.','İnişi kontrollü yap.']},
+  ohext:{n:'Overhead triceps ext.',r:'Triceps',t:'kg',s:2,reps:12,rest:60,ss:'hammer',q:'overhead cable triceps extension nasıl yapılır',tips:['Kablo halatı ya da tek dumbbell\'ı iki elle tut.','Dirsekler kulakların yanında kalsın, öne açılmasın.','Başın arkasına indir, yukarıda kolu tam aç.']},
+  legraise:{n:'Leg raise / cable crunch',r:'Alt karın',t:'bw',s:3,reps:12,rest:60,q:'lying leg raise nasıl yapılır',tips:['Sırtüstü yat, belin yere yapışık kalsın.','Bacakları kontrollü kaldır ve indir, yere değdirme.','Belin kalkıyorsa dizlerini bükerek yap.']},
+  pushup:{n:'Şınav',r:'Göğüs',t:'bw',s:3,reps:15,rest:60,q:'şınav nasıl çekilir doğru form',tips:['Eller omuzdan biraz geniş.','Vücut düz bir çizgi; kalça düşmesin.','Göğüs yere yaklaşana kadar in. Kolaylaşınca ayakları yükselt.']},
+  bwsquat:{n:'Squat (vücut ağırlığı)',r:'Ön bacak',t:'bw',s:3,reps:25,rest:60,leg:1,q:'bodyweight squat nasıl yapılır',tips:['Kalçayı geri ve aşağı it, topuklar yerden kalkmasın.','Göğsü dik tut.','Kolaylaşınca sırtına dolu bir çanta al.']},
+  bagrow:{n:'Sırt çantasıyla kürek',r:'Sırt',t:'kg',s:3,reps:12,rest:60,unit:'çanta kg',q:'bent over backpack row',tips:['Çantayı kitap ya da su şişeleriyle doldur.','Dizler hafif bükük, gövde öne eğik, sırt düz.','Çantayı karnına doğru çek. Hafif gelirse tek kolla yap.']},
+  pike:{n:'Pike şınav',r:'Omuz',t:'bw',s:3,reps:10,rest:60,q:'pike push up nasıl yapılır',tips:['Kalça yukarıda, vücut ters V şeklinde.','Başını ellerinin arasına doğru indir.','Dirsekler hafif geriye baksın.']},
+  lunge:{n:'Geriye lunge',r:'Bacak',t:'bw',s:3,reps:10,per:'her bacak',rest:60,leg:1,q:'reverse lunge nasıl yapılır',tips:['Bir adım geriye at, iki diz de yaklaşık 90° bükülsün.','Öndeki dizin içe kaçmasın.','Öndeki topuktan iterek kalk.']},
+  bridge:{n:'Glute bridge',r:'Kalça',t:'bw',s:3,reps:15,rest:45,leg:1,q:'glute bridge nasıl yapılır',tips:['Sırtüstü, dizler bükük, ayaklar yerde.','Topuklardan iterek kalçayı kaldır, tepede 1 saniye sık.','Beli değil kalçayı kullan.']},
+  ytw:{n:'Y-T-W',r:'Üst sırt',t:'bw',s:2,reps:8,rest:45,q:'prone Y T W raises',tips:['Yüzüstü yat, alnın yerde.','Kolları sırayla Y, T ve W şeklinde kaldır, her birinde 2 saniye tut.','Kürek kemiklerini sık, boynu zorlama.']},
+  deadbug:{n:'Dead bug',r:'Karın',t:'bw',s:3,reps:10,per:'her taraf',rest:45,q:'dead bug egzersizi nasıl yapılır',tips:['Sırtüstü, kollar tavana, dizler 90°.','Karşı kol ve bacağı yavaşça uzat, bel yere yapışık kalsın.','Geri getir, diğer tarafa geç.']}
+};
+const PROGRAMS={
+  salon:{name:'Salon',days:{A:{title:'Göğüs ağırlıklı',ex:['squat','bench','incline','csrow','lateral','curl','pushdown','plank']},B:{title:'Sırt ağırlıklı',ex:['rdl','pulldown','seatedrow','crossover','ohp','hammer','ohext','legraise']}},cardio:true,
+    note:'Isın: 5 dk yürüyüş ya da bisiklet, sonra ilk hareketin hafif bir seti. Setler arası dinlenme süresi ✓ işaretleyince otomatik başlar.'},
+  ev:{name:'Ev · sabah',days:{A:{title:'Sabah A',ex:['pushup','bwsquat','bagrow','plank']},B:{title:'Sabah B',ex:['pike','lunge','bridge','ytw','deadbug']}},
+    note:'3 dk ısın: kol çevirme, kedi-deve, kalça açma, 10 yavaş squat. Hareketleri tur halinde yap, 3 tur. Tükenmeye kadar gitme.'}
+};
+
+/* ---------- Helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>new Date().toLocaleDateString('sv-SE');
+const fmtD=d=>{try{return new Date(d+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'short',weekday:'short'})}catch(e){return d}};
+const num=v=>{if(v==null||v==='')return null;const x=parseFloat(String(v).replace(',','.'));return isFinite(x)?x:null};
+const fmtN=x=>String(x).replace('.',',');
+const yt=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+/* ---------- State ---------- */
+let tab=lsGet('ad-tab','w');
+let prog=lsGet('ad-prog','salon');
+let day=null;
+let noLegs=false;
+let drafts=lsGet('ad-drafts',{});
+let sessions=[],weights=[];
+let db=null,mode='local',loaded={s:false,w:false};
+let pendingDel=null,pendingRender=false,saving=false,saveErr='';
+
+function sortedSessions(){return [...sessions].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))}
+function nextDay(p){const s=sortedSessions().find(x=>x.program===p);return s?(s.day==='A'?'B':'A'):'A'}
+function lastFor(k){for(const s of sortedSessions()){const e=s.ex&&s.ex[k];if(e&&e.some(x=>x.done))return {s,sets:e.filter(x=>x.done)}}return null}
+function draftKey(){return prog+'-'+day}
+function getDraft(){const k=draftKey();if(!drafts[k]){drafts[k]={date:today(),ex:{},cardio:''}}return drafts[k]}
+function saveDrafts(){lsSet('ad-drafts',drafts)}
+function exSets(k){const d=getDraft();const e=LIB[k];if(!d.ex[k]){d.ex[k]=Array.from({length:e.s},()=>({kg:'',reps:'',done:false}))}return d.ex[k]}
+function draftHasData(d){return d&&(Object.values(d.ex||{}).some(a=>a.some(x=>x.done||x.kg!==''||x.reps!==''))||d.cardio)}
+
+/* ---------- Render ---------- */
+function render(){
+  pendingRender=false;
+  $('#today').textContent=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',weekday:'long'});
+  document.querySelectorAll('.tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===tab)));
+  $('#main').innerHTML=tab==='w'?workoutView():tab==='lib'?libView():tab==='hist'?histView():kiloView();
+  if(tab==='kilo')drawChart();
+}
+function softRender(){const a=document.activeElement;if(a&&a.tagName==='INPUT'&&$('#main').contains(a)){pendingRender=true;return}render()}
+
+function workoutView(){
+  if(!day)day=nextDay(prog);
+  const P=PROGRAMS[prog],D=P.days[day],nd=nextDay(prog);
+  const d=getDraft();
+  const list=D.ex.filter(k=>!(noLegs&&LIB[k].leg));
+  let h=`<section class="panel">
+    <div class="seg" role="group" aria-label="Program">${Object.entries(PROGRAMS).map(([k,v])=>`<button type="button" data-prog="${k}" aria-pressed="${prog===k}">${esc(v.name)}</button>`).join('')}</div>
+    <div class="seg" role="group" aria-label="Gün">${['A','B'].map(x=>`<button type="button" data-day="${x}" aria-pressed="${day===x}">Gün ${x}<span class="dsub">${esc(P.days[x].title)}${nd===x?' · <span class="next">sıradaki</span>':''}</span></button>`).join('')}</div>
+    <div class="row"><label class="toggle" for="noleg"><input type="checkbox" id="noleg" ${noLegs?'checked':''}> Bugün bacak yok</label><span class="sub"></span></div>
+    <p class="note">${esc(P.note)}</p>
+  </section>`;
+  h+=list.map(k=>exCard(k)).join('');
+  if(P.cardio){h+=`<section class="ex"><div class="cardio"><div><b>Eğimli yürüyüş</b><div class="sub">10-15 dk · vaktin daralırsa ilk bunu kısalt</div></div><div class="field"><input id="cardio" inputmode="numeric" value="${esc(d.cardio)}" placeholder="15" aria-label="Yürüyüş dakika"><span>dk</span></div></div></section>`}
+  const doneCount=list.reduce((n,k)=>n+exSets(k).filter(x=>x.done).length,0),total=list.reduce((n,k)=>n+LIB[k].s,0);
+  h+=`<button class="primary" id="finish" ${saving?'disabled':''}>${saving?'Kaydediliyor…':`Antrenmanı bitir · ${doneCount}/${total} set`}</button>`;
+  h+=`<p class="msg${saveErr?' err':''}" role="status">${esc(saveErr)}</p>`;
+  if(draftHasData(d))h+=`<button class="ghost" id="reset" style="justify-self:start">Bu antrenmanı sıfırla</button>`;
+  return h;
+}
+function exCard(k){
+  const e=LIB[k],sets=exSets(k),L=lastFor(k);
+  const unit=e.t==='sn'?'sn':'tekrar';
+  let last='Henüz kayıt yok';
+  if(L){
+    const parts=L.sets.map(x=>(x.kg!=null&&x.kg!==''&&e.t==='kg'?fmtN(x.kg)+'×':'')+(x.reps!=null?x.reps:'?'));
+    last=`Son (${fmtD(L.s.date)}): ${esc(parts.join(', '))}${e.t==='sn'?' sn':''}`;
+    if(L.sets.length>=e.s&&L.sets.every(x=>num(x.reps)>=e.reps))last+=` <span class="up">↑ ${e.t==='kg'?'Ağırlığı artır':e.t==='sn'?'Süreyi uzat':'Zorlaştır'}</span>`;
+  }
+  const lastKg=L&&e.t==='kg'?L.sets[0].kg:'';
+  const doneN=sets.filter(x=>x.done).length;
+  const rows=sets.map((x,i)=>{
+    const kgF=e.t==='kg'?`<div class="field"><input id="kg-${k}-${i}" data-k="${k}" data-i="${i}" data-f="kg" inputmode="decimal" value="${esc(x.kg)}" placeholder="${lastKg!==''&&lastKg!=null?esc(fmtN(lastKg)):'–'}" aria-label="Set ${i+1} kilo"><span>${esc(e.unit||'kg')}</span></div>`:'';
+    return `<div class="set${e.t==='kg'?'':' bw'}${x.done?' done':''}"><span class="sn">${i+1}</span>${kgF}<div class="field"><input id="r-${k}-${i}" data-k="${k}" data-i="${i}" data-f="reps" inputmode="numeric" value="${esc(x.reps)}" placeholder="${e.reps}" aria-label="Set ${i+1} ${unit}"><span>${e.t==='sn'?'sn':'tkr'}</span></div><button type="button" class="chk" data-chk="${k}" data-i="${i}" aria-pressed="${x.done}" aria-label="Set ${i+1} tamam">✓</button></div>`;
+  }).join('');
+  return `<article class="ex${doneN===e.s?' complete':''}" id="ex-${k}">
+    <div class="ex-head"><div class="chips"><span class="pill${e.leg?' leg':''}">${esc(e.r)}</span>${e.ss?`<span class="pill ss">Süper set · ${esc(LIB[e.ss].n)}</span>`:''}</div>
+      <h3>${esc(e.n)}</h3><span class="tgt">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}<small>${e.per?esc(e.per)+' · ':''}${doneN}/${e.s} set</small></span></div>
+    <p class="last">${last}</p>
+    <div class="sets">${rows}</div>
+    ${howTo(k)}
+  </article>`;
+}
+function howTo(k){const e=LIB[k];return `<details class="how"><summary>Nasıl yapılır</summary><ul>${e.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><a class="vid" href="${yt(e.q)}" target="_blank" rel="noopener">Videoyu YouTube'da izle</a></details>`}
+
+function libView(){
+  let h='<h2>Hareketler</h2><p class="note">Her hareketin doğru formu ve video bağlantısı. Video YouTube\'da açılır.</p>';
+  for(const [pk,P] of Object.entries(PROGRAMS)){for(const [dk,D] of Object.entries(P.days)){
+    h+=`<h2>${esc(P.name)} · Gün ${dk}</h2><div class="lib">${D.ex.map(k=>{const e=LIB[k];return `<article class="ex"><div class="ex-head"><div class="chips"><span class="pill${e.leg?' leg':''}">${esc(e.r)}</span></div><h3>${esc(e.n)}</h3><span class="tgt">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}</span></div><ul style="margin:0;padding-left:18px;display:grid;gap:4px">${e.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><a class="vid" href="${yt(e.q)}" target="_blank" rel="noopener">Videoyu YouTube'da izle</a></article>`}).join('')}</div>`;
+  }}
+  return h;
+}
+
+function histView(){
+  const s=sortedSessions();
+  if(mode==='loading'&&!s.length)return '<div class="empty">Kayıtlar yükleniyor…</div>';
+  if(!s.length)return '<h2>Geçmiş</h2>'+backupBox()+'<div class="empty">Henüz kayıtlı antrenman yok.<br>Antrenman sekmesinde setleri ✓ ile işaretleyip <b>Antrenmanı bitir</b>\'e dokununca burada görünür.</div>';
+  return '<h2>Geçmiş</h2>'+backupBox()+s.map(x=>{
+    const P=PROGRAMS[x.program]||{name:x.program};
+    const keys=Object.keys(x.ex||{}).filter(k=>x.ex[k].some(z=>z.done));
+    const lines=keys.map(k=>{const e=LIB[k]||{n:k,t:'kg'};const sets=x.ex[k].filter(z=>z.done).map(z=>(e.t==='kg'&&z.kg!=null&&z.kg!==''?fmtN(z.kg)+'×':'')+z.reps).join(', ');return `<li><b>${esc(e.n)}</b><span>${esc(sets)}${e.t==='sn'?' sn':''}</span></li>`}).join('');
+    return `<details class="sess"><summary><span>${esc(fmtD(x.date))}</span><span><span class="daychip">${esc(P.name)} ${esc(x.day)}</span></span></summary>
+      <ul>${lines}${x.cardio?`<li><b>Eğimli yürüyüş</b><span>${esc(x.cardio)} dk</span></li>`:''}${x.noLegs?'<li><b>Not</b><span>Bacak yapılmadı</span></li>':''}</ul>
+      <button class="ghost danger" data-del="${esc(x.id)}">${pendingDel===x.id?'Silmek için tekrar dokun':'Bu antrenmanı sil'}</button></details>`}).join('');
+}
+
+function backupBox(){return `<section class="panel"><p class="note">Kayıtların bu telefonda saklanıyor. Ayda bir yedek al; telefon değiştirirsen yedeği geri yükle.</p><div class="row" style="justify-content:flex-start"><button class="ghost" id="exp">Yedeği indir</button><label class="ghost" for="imp" style="cursor:pointer">Yedeği geri yükle</label><input type="file" id="imp" accept="application/json,.json" hidden></div></section>`}
+function kiloView(){
+  const w=[...weights].sort((a,b)=>a.date<b.date?-1:1);
+  const start=w.length?w[0].kg:95,cur=w.length?w[w.length-1].kg:95;
+  const diff=Math.round((cur-start)*10)/10;
+  return `<h2>Kilo</h2><section class="panel">
+    <div class="stats"><div class="stat"><span class="lbl">Başlangıç</span><strong>${fmtN(start)}</strong></div><div class="stat"><span class="lbl">Şimdi</span><strong>${fmtN(cur)}</strong></div><div class="stat"><span class="lbl">Fark</span><strong style="color:${diff<0?'var(--good)':'var(--ink)'}">${diff>0?'+':''}${fmtN(diff)}</strong></div></div>
+    <div class="chart" id="chart"></div>
+    <p class="note">Hedef hız ayda 2-3 kg. Haftada bir, aynı gün sabah aç karnına tartıl.</p></section>
+  <section class="panel">
+    <div class="wform"><label for="w-date"><span class="lbl">Tarih</span><input type="date" id="w-date" value="${today()}"></label><label for="w-kg"><span class="lbl">Kilo</span><input id="w-kg" inputmode="decimal" placeholder="${fmtN(cur)}"></label><button class="ghost" id="w-add">Ekle</button></div>
+    <ul class="wlist">${[...w].reverse().slice(0,15).map(x=>`<li><span>${esc(fmtD(x.date))}</span><span><b>${fmtN(x.kg)} kg</b><button class="x" aria-label="${esc(fmtD(x.date))} kaydını sil" data-wdel="${esc(x.date)}">×</button></span></li>`).join('')}</ul>
+  </section>`;
+}
+function drawChart(){
+  const el=$('#chart');if(!el)return;
+  const w=[...weights].sort((a,b)=>a.date<b.date?-1:1);
+  if(w.length<2){el.innerHTML='<p class="note">İkinci tartını eklediğinde grafik burada çizilir.</p>';return}
+  const W=340,H=150,pl=34,pr=12,pt=12,pb=24;
+  const t=w.map(x=>new Date(x.date+'T12:00').getTime()),ks=w.map(x=>x.kg);
+  const lo=Math.floor(Math.min(...ks)-1),hi=Math.ceil(Math.max(...ks)+1),mid=Math.round((lo+hi)/2);
+  const t0=t[0],t1=t[t.length-1];
+  const X=v=>pl+(W-pl-pr)*((v-t0)/((t1-t0)||1)),Y=v=>pt+(H-pt-pb)*(1-(v-lo)/(hi-lo));
+  const pts=w.map((x,i)=>[X(t[i]),Y(x.kg)]);
+  const line=pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const area=`M${pts[0][0]},${Y(lo)} L${line.split(' ').join(' L')} L${pts[pts.length-1][0]},${Y(lo)} Z`;
+  const L=pts[pts.length-1];
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Kilo grafiği">
+   ${[lo,mid,hi].map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)" stroke-width="1"/><text x="${pl-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v}</text>`).join('')}
+   <path d="${area}" style="fill:var(--accent);opacity:.14"/>
+   <polyline points="${line}" fill="none" style="stroke:var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+   <circle cx="${L[0]}" cy="${L[1]}" r="4.5" style="fill:var(--accent)"/>
+   <text x="${pl}" y="${H-6}" font-size="11" style="fill:var(--muted)">${esc(fmtD(w[0].date))}</text>
+   <text x="${W-pr}" y="${H-6}" font-size="11" text-anchor="end" style="fill:var(--muted)">${esc(fmtD(w[w.length-1].date))}</text></svg>`;
+}
+
+/* ---------- Rest timer ---------- */
+let timer={end:0,total:0,iv:null,label:''},actx=null;
+function beep(){try{if(!actx)return;const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.setValueAtTime(.2,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.5);o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+.5)}catch(e){}}
+function startRest(sec,label){
+  try{if(!actx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)actx=new AC()}else if(actx.state==='suspended')actx.resume()}catch(e){}
+  timer.end=Date.now()+sec*1000;timer.total=sec;timer.label=label;
+  const r=$('#rest');r.hidden=false;r.classList.remove('ready');
+  clearInterval(timer.iv);timer.iv=setInterval(tick,250);tick();
+}
+function tick(){
+  const left=Math.max(0,Math.round((timer.end-Date.now())/1000));
+  const m=Math.floor(left/60),s=left%60;
+  $('#rest-t').textContent=m+':'+String(s).padStart(2,'0');
+  $('#rest-l').textContent=left?'Dinlenme · sıradaki: '+timer.label:'Hazırsın · '+timer.label;
+  $('#rest-bar').style.transform='scaleX('+(timer.total?left/timer.total:0)+')';
+  if(!left){clearInterval(timer.iv);timer.iv=null;$('#rest').classList.add('ready');beep();try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}setTimeout(()=>{if(!timer.iv)$('#rest').hidden=true},4000)}
+}
+
+/* ---------- Data ---------- */
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2400)}
+function loadLocal(){sessions=lsGet('ad-sessions',[]);weights=lsGet('ad-weights',[{date:'2026-10-07',kg:95}])}
+function persist(){lsSet('ad-sessions',sessions);lsSet('ad-weights',weights)}
+async function addSession(doc){sessions=[{id:'s'+Date.now(),...doc},...sessions];persist()}
+async function delSession(id){sessions=sessions.filter(s=>s.id!==id);persist()}
+async function setWeight(date,kg){weights=[...weights.filter(x=>x.date!==date),{date,kg}];persist()}
+async function delWeight(date){weights=weights.filter(x=>x.date!==date);persist()}
+function exportData(){
+  const blob=new Blob([JSON.stringify({app:'antrenman-defteri',v:1,exportedAt:new Date().toISOString(),sessions,weights},null,1)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='antrenman-yedek-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+}
+function importData(file){
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.sessions)||!Array.isArray(d.weights))throw 0;
+    const ids=new Set(sessions.map(s=>s.id));d.sessions.forEach(s=>{if(s&&s.id&&!ids.has(s.id))sessions.push(s)});
+    const wd=new Map(weights.map(w=>[w.date,w]));d.weights.forEach(w=>{if(w&&w.date)wd.set(w.date,w)});weights=[...wd.values()];
+    persist();render();toast('Yedek geri yüklendi')}catch(e){toast('Bu dosya bir Antrenman Defteri yedeği değil')}};
+  r.readAsText(file);
+}
+async function finish(){
+  const d=getDraft(),P=PROGRAMS[prog];
+  const ex={};
+  P.days[day].ex.forEach(k=>{if(noLegs&&LIB[k].leg)return;const e=LIB[k];const a=exSets(k).map(x=>({kg:e.t==='kg'?num(x.kg):null,reps:num(x.reps),done:!!x.done}));if(a.some(x=>x.done))ex[k]=a});
+  const cardio=num(d.cardio);
+  if(!Object.keys(ex).length&&!cardio){saveErr='Kaydetmek için en az bir seti ✓ ile işaretle.';render();return}
+  saving=true;saveErr='';render();
+  const doc={date:d.date||today(),program:prog,day,ex,createdAt:Date.now()};
+  if(cardio)doc.cardio=cardio;if(noLegs)doc.noLegs=true;
+  try{await addSession(doc);delete drafts[draftKey()];saveDrafts();saving=false;day=null;noLegs=false;window.scrollTo(0,0);render();toast('Kaydedildi · sıradaki Gün '+nextDay(prog))}
+  catch(e){saving=false;saveErr='Kaydedilemedi. Telefonda yer kalmamış olabilir; tekrar dene.';render()}
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('click',async ev=>{
+  const b=ev.target.closest('button');if(!b)return;
+  if(b.dataset.tab){tab=b.dataset.tab;lsSet('ad-tab',tab);pendingDel=null;render();window.scrollTo(0,0);return}
+  if(b.dataset.act==='rest-add'){timer.end=Math.max(timer.end,Date.now())+30000;timer.total+=30;if(!timer.iv){timer.iv=setInterval(tick,250);$('#rest').classList.remove('ready')}tick();return}
+  if(b.dataset.act==='rest-skip'){clearInterval(timer.iv);timer.iv=null;$('#rest').hidden=true;return}
+  if(b.dataset.prog){prog=b.dataset.prog;lsSet('ad-prog',prog);day=null;saveErr='';render();return}
+  if(b.dataset.day){day=b.dataset.day;saveErr='';render();return}
+  if(b.dataset.chk){
+    const k=b.dataset.chk,i=+b.dataset.i,e=LIB[k],sets=exSets(k),x=sets[i];
+    x.done=!x.done;
+    if(x.done){
+      if(x.reps==='')x.reps=String(e.reps);
+      if(e.t==='kg'&&x.kg===''){const prev=i>0?sets[i-1].kg:'';const L=lastFor(k);x.kg=prev!==''?prev:(L&&L.sets[0].kg!=null?String(L.sets[0].kg):'')}
+      const nextIdx=sets.findIndex(z=>!z.done);
+      let label;if(nextIdx>=0)label=e.n+' · set '+(nextIdx+1);else{const list=PROGRAMS[prog].days[day].ex.filter(z=>!(noLegs&&LIB[z].leg));const n=list[list.indexOf(k)+1];label=n?LIB[n].n:'Son hareket bitti'}
+      const sup=e.ss&&nextIdx>=0;
+      startRest(sup?20:e.rest,sup?LIB[e.ss].n+' (süper set)':label);
+    }
+    saveDrafts();const card=$('#ex-'+k);if(card){card.outerHTML=exCard(k)}
+    const f=$('#finish');if(f){const list=PROGRAMS[prog].days[day].ex.filter(z=>!(noLegs&&LIB[z].leg));f.textContent=`Antrenmanı bitir · ${list.reduce((n,z)=>n+exSets(z).filter(q=>q.done).length,0)}/${list.reduce((n,z)=>n+LIB[z].s,0)} set`}
+    return;
+  }
+  if(b.id==='finish'){finish();return}
+  if(b.id==='exp'){exportData();return}
+  if(b.id==='reset'){if(b.dataset.armed){delete drafts[draftKey()];saveDrafts();render()}else{b.dataset.armed='1';b.textContent='Emin misin? Tekrar dokun'}return}
+  if(b.dataset.del){const id=b.dataset.del;if(pendingDel!==id){pendingDel=id;b.textContent='Silmek için tekrar dokun';return}pendingDel=null;try{await delSession(id);render();toast('Antrenman silindi')}catch(e){toast('Silinemedi, tekrar dene')}return}
+  if(b.id==='w-add'){const kg=num($('#w-kg').value),d=$('#w-date').value;if(!kg||!d){toast('Tarih ve kilo gir');return}try{await setWeight(d,kg);render();toast('Kilo eklendi')}catch(e){toast('Kaydedilemedi, tekrar dene')}return}
+  if(b.dataset.wdel){try{await delWeight(b.dataset.wdel);if(!db)render()}catch(e){toast('Silinemedi')}return}
+});
+document.addEventListener('change',ev=>{if(ev.target.id==='noleg'){noLegs=ev.target.checked;render()}});
+let saveT=null;
+document.addEventListener('input',ev=>{
+  const t=ev.target;
+  if(t.dataset.f){const sets=exSets(t.dataset.k);sets[+t.dataset.i][t.dataset.f]=t.value}
+  else if(t.id==='cardio'){getDraft().cardio=t.value}
+  else return;
+  clearTimeout(saveT);saveT=setTimeout(saveDrafts,300);
+});
+document.addEventListener('focusout',()=>{setTimeout(()=>{const a=document.activeElement;if(pendingRender&&!(a&&a.tagName==='INPUT'))render()},50)});
+
+/* ---------- Boot ---------- */
+mode='local';loadLocal();render();
+document.addEventListener('change',ev=>{if(ev.target.id==='imp'&&ev.target.files[0]){importData(ev.target.files[0]);ev.target.value=''}});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+})();
+</script>
+</body>
+</html>
