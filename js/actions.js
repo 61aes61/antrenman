@@ -20,7 +20,8 @@ document.addEventListener('click',async ev=>{
   const b=ev.target.closest('button');if(!b){if(ev.target.classList&&ev.target.classList.contains('sheet'))closeSheet();return}
   if(b.dataset.close){closeSheet();return}
   if(b.dataset.settings){openSettings();return}
-  if(b.dataset.signin){closeSheet();signIn();return}
+  if(b.dataset.lmode){loginMode=b.dataset.lmode;authErr='';const u=$('#lu')?$('#lu').value:'';render();keepLogin(u);return}
+  if(b.dataset.tologin){closeSheet();lsSet('ad-guest',false);authErr='';render();window.scrollTo(0,0);return}
   if(b.dataset.guest){lsSet('ad-guest',true);render();return}
   if(b.id==='signout'){if(b.dataset.armed){signOutAll()}else{b.dataset.armed='1';b.textContent='Emin misin? Tekrar dokun'}return}
   if(b.dataset.set){const id=b.dataset.set,[mn,mx,st]=SET_RULES[id];settings[id]=Math.min(mx,Math.max(mn,settings[id]+st*(+b.dataset.d)));saveSettings();openSettings();render();return}
@@ -79,6 +80,7 @@ document.addEventListener('click',async ev=>{
   if(b.id==='w-add'){const kg=num($('#w-kg').value),d=$('#w-date').value;if(!kg||!d){toast('Tarih ve kilo gir');return}try{await setWeight(d,kg);render();toast('Kilo eklendi')}catch(e){toast('Kaydedilemedi, tekrar dene')}return}
   if(b.dataset.wdel){try{await delWeight(b.dataset.wdel);render()}catch(e){toast('Silinemedi')}return}
 });
+document.addEventListener('submit',ev=>{if(ev.target.id==='lform'){ev.preventDefault();loginSubmit()}});
 window.addEventListener('popstate',()=>{if(openEx){openEx=null;render()}});
 let saveT=null;
 document.addEventListener('input',ev=>{

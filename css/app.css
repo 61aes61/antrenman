@@ -341,3 +341,9 @@ body.nologin .tabs{display:none}
 .gbtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:320px;padding:13px 16px;border-radius:10px;border:1px solid var(--line);background:#fff;color:#1f1f1f;font:600 1rem var(--body);cursor:pointer}
 .gbtn:disabled{opacity:.6}
 .note.small{font-size:.78rem}
+
+.login .mseg{width:100%;max-width:320px}
+.lform{display:grid;gap:10px;width:100%;max-width:320px;text-align:left}
+.lform label{display:grid;gap:4px}
+.lform input{font:500 1rem var(--body);padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);width:100%}
+.lform .primary{margin-top:4px}

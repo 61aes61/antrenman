@@ -1,5 +1,5 @@
 'use strict';
-/* Set Defteri — Google ile giriş ve bulut senkronu (Firebase).
+/* Set Defteri — kullanıcı adı/şifre ile giriş ve bulut senkronu (Firebase).
    Bu ayarlar herkese açıktır; veriye erişimi Firestore güvenlik kuralları sınırlar:
    her kullanıcı sadece users/{kendi uid}/ altını okuyup yazabilir. */
 const FB_CONFIG={apiKey:'AIzaSyA_UBGAWMzONRcDS2pFv6nQsq7R199E6wA',authDomain:'set-defteri.firebaseapp.com',projectId:'set-defteri',storageBucket:'set-defteri.firebasestorage.app',messagingSenderId:'424889622849',appId:'1:424889622849:web:92db933597fe013d5b41c0'};
@@ -26,17 +26,34 @@ function cloudInit(){
     render();
   });
 }
-async function signIn(){
-  if(!cloudOK()){authErr='Giriş için internet bağlantısı gerekiyor.';render();return}
-  authErr='';signingIn=true;render();
-  const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
-  try{await firebase.auth().signInWithPopup(p)}
-  catch(e){
-    if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){try{await firebase.auth().signInWithRedirect(p);return}catch(e2){authErr=authMsg(e2)}}
-    else if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')authErr=authMsg(e);
-    signingIn=false;render();
-  }
+/* Kullanıcı adı + şifre. Firebase e-posta istediği için kullanıcı adı içeride
+   "<ad>@uye.setdefteri.app" adresine çevrilir; bu adres hiçbir yere mail göndermez.
+   Aynı adres ikinci kez açılamadığı için her kullanıcı adı tek kişiye aittir. */
+const UDOMAIN='@uye.setdefteri.app';
+let loginMode='login';
+function normUser(u){return String(u||'').trim().toLocaleLowerCase('tr-TR').replace(/ı/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c')}
+function authMsg(e){
+  const c=e&&e.code||'';
+  if(c==='auth/email-already-in-use')return 'Bu kullanıcı adı alınmış. Başka bir ad dene.';
+  if(c==='auth/invalid-credential'||c==='auth/wrong-password'||c==='auth/user-not-found'||c==='auth/invalid-login-credentials')return 'Kullanıcı adı ya da şifre yanlış.';
+  if(c==='auth/weak-password')return 'Şifre en az 6 karakter olmalı.';
+  if(c==='auth/too-many-requests')return 'Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar dene.';
+  if(c==='auth/network-request-failed')return 'İnternet bağlantısı yok. Bağlanınca tekrar dene.';
+  return 'Bir sorun oldu ('+(c||'bilinmeyen hata')+'). Tekrar dene.';
 }
+async function loginSubmit(){
+  if(!cloudOK()){authErr='Giriş için internet bağlantısı gerekiyor.';render();return}
+  const u=normUser($('#lu').value),p=$('#lp').value,p2=$('#lp2')?$('#lp2').value:p;
+  if(!/^[a-z0-9_.]{3,20}$/.test(u)){authErr='Kullanıcı adı 3-20 karakter olmalı; harf, rakam, nokta ve alt çizgi kullanabilirsin.';render();keepLogin(u);return}
+  if(p.length<6){authErr='Şifre en az 6 karakter olmalı.';render();keepLogin(u);return}
+  if(loginMode==='signup'&&p!==p2){authErr='Şifreler aynı değil.';render();keepLogin(u);return}
+  authErr='';signingIn=true;render();keepLogin(u);
+  try{
+    if(loginMode==='signup'){const r=await firebase.auth().createUserWithEmailAndPassword(u+UDOMAIN,p);await r.user.updateProfile({displayName:u});fbUser=r.user;render()}
+    else await firebase.auth().signInWithEmailAndPassword(u+UDOMAIN,p);
+  }catch(e){authErr=authMsg(e);signingIn=false;render();keepLogin(u)}
+}
+function keepLogin(u){const el=$('#lu');if(el&&u)el.value=u}
 async function signOutAll(){
   try{await firebase.auth().signOut()}catch(e){}
   ['ad-sessions','ad-weights','ad-plans','ad-settings','ad-drafts','ad-tab','ad-prog'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
@@ -69,21 +86,29 @@ function cloudSave(kind,id,data){
   const r=kind==='meta'?userRef().collection('meta').doc('state'):userRef().collection(kind).doc(String(id));
   (data===null?r.delete():r.set(clean(data),{merge:kind==='meta'})).catch(()=>toast('Buluta kaydedilemedi'));
 }
-function firstName(){return fbUser&&fbUser.displayName?fbUser.displayName.split(' ')[0]:''}
+function userName(){if(!fbUser)return '';return fbUser.displayName||(fbUser.email||'').split('@')[0]}
+function firstName(){return userName()}
 function needLogin(){return authReady&&cloudOK()&&!fbUser&&!lsGet('ad-guest',false)}
 function loginView(){
+  const su=loginMode==='signup';
   return `<div class="login">
-    <img src="icons/icon-192.png" alt="" width="88" height="88">
-    <h2 class="sh">Set Defteri'ne hoş geldin</h2>
-    <p class="note">Antrenmanlarını, kilonu ve programını kaydet. Giriş yaparsan kayıtların hesabında saklanır; telefon değiştirsen de kaybolmaz.</p>
-    <button type="button" class="gbtn" data-signin="1" ${signingIn?'disabled':''}><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>${signingIn?'Giriş yapılıyor…':'Google ile giriş yap'}</button>
-    ${authErr?`<p class="msg err">${esc(authErr)}</p>`:''}
+    <img src="icons/icon-192.png" alt="" width="80" height="80">
+    <h2 class="sh">${su?'Hesap oluştur':'Set Defteri\'ne hoş geldin'}</h2>
+    <div class="mseg" role="group" aria-label="Giriş türü"><button type="button" data-lmode="login" aria-pressed="${!su}">Giriş yap</button><button type="button" data-lmode="signup" aria-pressed="${su}">Kayıt ol</button></div>
+    <form id="lform" class="lform" autocomplete="on">
+      <label for="lu"><span class="lbl">Kullanıcı adı</span><input id="lu" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="ornek: eren61" required></label>
+      <label for="lp"><span class="lbl">Şifre</span><input id="lp" type="password" name="password" autocomplete="${su?'new-password':'current-password'}" placeholder="en az 6 karakter" required></label>
+      ${su?'<label for="lp2"><span class="lbl">Şifre (tekrar)</span><input id="lp2" type="password" autocomplete="new-password" required></label>':''}
+      ${authErr?`<p class="msg err">${esc(authErr)}</p>`:''}
+      <button type="submit" class="primary" ${signingIn?'disabled':''}>${signingIn?'Bekle…':su?'Kayıt ol':'Giriş yap'}</button>
+    </form>
+    ${su?'<p class="note small">Kullanıcı adın sana özel olur, başkası aynı adı alamaz. Şifreni unutursan sıfırlamak için e-posta yok, o yüzden şifreni bir yere not et.</p>':''}
     <button type="button" class="ghost" data-guest="1">Giriş yapmadan devam et</button>
-    <p class="note small">Giriş yapmazsan kayıtların sadece bu telefonda kalır. Kayıtların Google'ın Firebase hizmetinde, sadece senin hesabının erişebileceği şekilde saklanır.</p>
+    <p class="note small">Giriş yapmazsan kayıtların sadece bu telefonda kalır. Giriş yaparsan kayıtların Google'ın Firebase hizmetinde, sadece senin hesabının erişebileceği şekilde saklanır.</p>
   </div>`;
 }
 function accountHTML(){
   if(!cloudOK())return `<section class="panel"><span class="lbl">Hesap</span><p class="note">Hesap işlemleri için internet bağlantısı gerekiyor.</p></section>`;
-  if(fbUser)return `<section class="panel"><span class="lbl">Hesap</span><div class="srow"><span><b>${esc(fbUser.displayName||'Google hesabı')}</b><br><span class="sub">${esc(fbUser.email||'')}</span></span><button type="button" class="ghost danger" id="signout">Çıkış yap</button></div><p class="note">Kayıtların hesabında saklanıyor; başka bir telefondan girince de görünür.</p></section>`;
-  return `<section class="panel"><span class="lbl">Hesap</span><p class="note">Şu an giriş yapmadın; kayıtların sadece bu telefonda. Giriş yaparsan bu telefondaki kayıtlar hesabına aktarılır.</p><button type="button" class="gbtn" data-signin="1">Google ile giriş yap</button>${authErr?`<p class="msg err">${esc(authErr)}</p>`:''}</section>`;
+  if(fbUser)return `<section class="panel"><span class="lbl">Hesap</span><div class="srow"><span><span class="sub">Kullanıcı adı</span><br><b>${esc(userName())}</b></span><button type="button" class="ghost danger" id="signout">Çıkış yap</button></div><p class="note">Kayıtların hesabında saklanıyor; başka bir telefondan girince de görünür.</p></section>`;
+  return `<section class="panel"><span class="lbl">Hesap</span><p class="note">Şu an giriş yapmadın; kayıtların sadece bu telefonda. Giriş yaparsan ya da kayıt olursan bu telefondaki kayıtlar hesabına aktarılır.</p><button type="button" class="primary sm" data-tologin="1">Giriş yap / Kayıt ol</button></section>`;
 }
