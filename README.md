@@ -13,7 +13,8 @@ Telefonda ana ekrana eklenen kişisel antrenman uygulaması (web uygulaması / P
 - `js/actions.js` — antrenmanı kaydetme ve dokunma olayları.
 - `js/boot.js` — açılış.
 - `anim.js` — hareket çizim animasyonları.
-- `sw.js` — internetsiz açılma. **Her güncellemede `VERSION` değerini artır.**
+- `sw.js` — internetsiz açılma.
+- `release.sh` — her güncellemeden önce çalıştır: sürüm numarasını ve dosya adreslerindeki `?v=` değerlerini artırır, telefonlar yeni sürümü hemen alır.
 
 ## Kayıtlar
 Telefonun tarayıcı hafızasında (localStorage) durur. Geçmiş sekmesinden JSON yedeği alınıp geri yüklenebilir.
