@@ -11,6 +11,7 @@ function render(){
   $('#title').textContent=TT[tab];
   document.body.classList.toggle('nologin',needLogin());
   if(needLogin()){$('#title').textContent='Set Defteri';$('#main').innerHTML=loginView();return}
+  if(wiz){$('#title').textContent='Profil ve hedef';$('#main').innerHTML=wizView();return}
   $('#main').innerHTML=tab==='home'?homeView():tab==='w'?workoutView():tab==='kardiyo'?soonView('Kardiyo','Yürüyüş, koşu ve bisiklet kayıtların burada olacak.'):tab==='beslenme'?soonView('Beslenme','Öğünlerin ve günlük protein, karbonhidrat, yağ, kalori takibin burada olacak.'):tab==='karne'?karneView()+'<h2 class="hh">Kilo</h2>'+kiloView():histView();
   if(tab==='karne')drawChart();
   mountAnims();
@@ -26,17 +27,18 @@ function progIcon(k){
   return `<svg class="prog" viewBox="0 0 38 38" role="img" aria-label="${n}/${e.s} set"><circle cx="19" cy="19" r="15" style="stroke:var(--line)"/>${n?`<circle cx="19" cy="19" r="15" style="stroke:var(--accent)" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 19 19)" stroke-linecap="round"/>`:''}<text x="19" y="23.5" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--muted)">${n}/${e.s}</text></svg>`;
 }
 function exRow(k){const e=E(k);return `<button type="button" class="exrow" data-open="${k}">${thumb(k)}<span class="txt"><span class="nm">${esc(e.n)}</span><span class="rg"><span class="sr">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}</span> · ${esc(e.r)}</span></span>${progIcon(k)}</button>`}
-function dayNo(d){return d==='B'?2:1}
-function planName(p,d){return (p==='salon'?'Salon ':'Ev ')+dayNo(d)}
+function dayNo(d,p){const i=dayKeysOf(p||prog).indexOf(d);return i>=0?i+1:(d==='B'?2:1)}
+function planName(p,d){return (p==='salon'?'Salon ':'Ev ')+dayNo(d,p)}
+function dayShort(p,d){if(plans[p].gen)return dayTitle(p,d).replace(/ \d$/,'');return p==='salon'?({A:'Göğüs',B:'Sırt'}[d]||''):''}
 function workoutView(){
-  if(!day)day=nextDay(prog);
+  if(!day||!dayKeysOf(prog).includes(day))day=nextDay(prog);
   if(editing)return editView();
   if(openEx&&curList().includes(openEx))return detailView(openEx);
   openEx=null;
   const P=PROGRAMS[prog],d=getDraft(),list=curList();
-  const nd=nextDay(prog),sub={salon:{A:'Göğüs',B:'Sırt'},ev:{A:'',B:''}}[prog];
+  const nd=nextDay(prog);
   let h=`<div class="switch"><div class="mseg" role="group" aria-label="Program">${Object.entries(PROGRAMS).map(([pk,PP])=>`<button type="button" data-prog="${pk}" aria-pressed="${prog===pk}">${pk==='salon'?'Salon':'Ev'}</button>`).join('')}</div>
-  <div class="dseg" role="group" aria-label="Gün">${['A','B'].map(x=>`<button type="button" data-day="${x}" aria-pressed="${day===x}">Gün ${dayNo(x)}${sub[x]?' · '+sub[x]:''}${nd===x?'<i>Sıradaki</i>':''}</button>`).join('')}</div></div>
+  <div class="dseg" role="group" aria-label="Gün">${dayKeysOf(prog).map(x=>`<button type="button" data-day="${x}" aria-pressed="${day===x}">Gün ${dayNo(x)}${dayShort(prog,x)?' · '+dayShort(prog,x):''}${nd===x?'<i>Sıradaki</i>':''}</button>`).join('')}</div></div>
   <details class="notes"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 20h20z" style="fill:var(--warn)"/><path d="M12 9v5" style="stroke:var(--bg)" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17" r="1.3" style="fill:var(--bg)"/></svg>Antrenman Notları<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="nb"><p class="note">${esc(P.note)}</p><p class="note">Bir harekete dokun, setlerini orada işaretle. Mavi kutudaki hareketler süper set: arka arkaya yapılır.</p><button type="button" class="ghost" data-warmup="1" style="justify-self:start">Isınmayı başlat</button></div></details>
   <div class="hhrow"><h2 class="hh">Hareketler</h2><button type="button" class="ghost sm" data-edit="1">Düzenle</button></div><div class="list">`;
   for(let i=0;i<list.length;i++){const k=list[i],e=E(k);
@@ -247,6 +249,7 @@ function settingsHTML(){
   return `<div class="sheet" role="dialog" aria-modal="true" aria-label="Ayarlar"><div class="sheet-in">
     <div class="row"><h2 class="sh">Ayarlar</h2><button type="button" class="ghost" data-close="1">Kapat</button></div>
     ${accountHTML()}
+    <section class="panel"><span class="lbl">Profil ve hedef</span><p class="note">Ölçülerini ve hedefini güncelle; kalori ve programın yeniden hesaplansın.</p><button type="button" class="primary sm" data-wiz="1">${profile?'Profili güncelle':'Profil oluştur'}</button></section>
     <section class="panel"><span class="lbl">Hedef</span>${step('goal','Haftalık antrenman',settings.goal,'gün')}</section>
     <section class="panel"><span class="lbl">Dinlenme süreleri</span>
       ${step('restBig','Ana hareketler',settings.restBig,'sn')}${step('restMid','Orta hareketler',settings.restMid,'sn')}${step('restIso','Küçük hareketler',settings.restIso,'sn')}${step('ss','Süper set arası',settings.ss,'sn')}</section>
@@ -271,9 +274,10 @@ function homeView(){
     <svg class="gring" viewBox="0 0 100 100" role="img" aria-label="Bu hafta ${wc} / ${goal} antrenman"><circle cx="50" cy="50" r="42" style="fill:none;stroke:var(--line)" stroke-width="9"/><circle cx="50" cy="50" r="42" style="fill:none;stroke:${wc>=goal?'var(--good)':'var(--accent)'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle" font-size="22" font-weight="700" style="fill:var(--ink)">${wc}/${goal}</text></svg>
     <div class="gtxt"><b>${wc>=goal?'Haftalık hedef tamam':'Bu hafta '+(goal-wc)+' antrenman kaldı'}</b><span class="sub">${st?`<svg viewBox="0 0 24 24" width="14" height="14" style="fill:var(--warn);vertical-align:-2px"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-4 2-5 0 2 1 3 2 3 0-4-1-6 1-9z"/></svg> ${st} hafta üst üste hedef`:'Hedefi tuttur, seri başlasın'}</span><div class="wdays">${days}</div></div>
   </section>
+  ${profileCard()}
   <section class="panel next">
     <span class="lbl">Sıradaki antrenman</span>
-    <div class="nx"><b>${esc(planName(prog,nd))}</b><span class="sub">${esc(P.days[nd].title)} · ${keys.length} hareket · ${totalSets} set</span></div>
+    <div class="nx"><b>${esc(planName(prog,nd))}</b><span class="sub">${esc(dayTitle(prog,nd))} · ${keys.length} hareket · ${totalSets} set</span></div>
     <div class="nbtns"><button type="button" class="ghost" data-warmup="1">Isınmayı başlat</button><button type="button" class="primary sm" data-start="${prog}-${nd}">Antrenmana başla</button></div>
   </section>
   ${last?`<section class="panel"><span class="lbl">Son antrenman</span><div class="row"><span><b>${esc(planName(last.program,last.day))}</b> <span class="sub">${esc(fmtD(last.date))}${last.duration?' · '+last.duration+' dk':''}</span></span><button type="button" class="ghost" data-sum="${esc(last.id)}">Özet</button></div></section>`:''}
@@ -293,7 +297,8 @@ function editView(){
     <p class="note">Set ve tekrar sayısını değiştir, okla sırala, ✕ ile çıkar. Değişiklikler hemen kaydedilir.</p>
     <div class="list">${rows||'<p class="note" style="padding:14px">Bu günde hareket yok. Aşağıdan ekle.</p>'}</div>
     <button type="button" class="primary" data-addpick="1">+ Hareket ekle</button>
-    <button type="button" class="ghost" id="plreset" style="justify-self:start">Bu günü varsayılana döndür</button>`;
+    ${plans.bak&&plans.bak[prog]?'<button type="button" class="ghost" id="plrestore" style="justify-self:start">Önceki programıma dön</button>':''}
+    ${!plans[prog].gen&&DEFAULT_PLAN[prog][day]?'<button type="button" class="ghost" id="plreset" style="justify-self:start">Bu günü varsayılana döndür</button>':''}`;
 }
 function pickerHTML(){
   const have=new Set((plans[prog][day]||[]).map(x=>x.k));

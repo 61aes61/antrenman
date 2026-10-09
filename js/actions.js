@@ -20,6 +20,12 @@ document.addEventListener('click',async ev=>{
   const b=ev.target.closest('button');if(!b){if(ev.target.classList&&ev.target.classList.contains('sheet'))closeSheet();return}
   if(b.dataset.close){closeSheet();return}
   if(b.dataset.settings){openSettings();return}
+  if(b.dataset.wiz){closeSheet();startWizard();return}
+  if(b.dataset.wzback){if(!wiz)return;if(wiz.step===0)wiz=null;else{wiz.step--;wiz.err=''}render();window.scrollTo(0,0);return}
+  if(b.dataset.wznext){if(!wiz)return;const e=wizValidate();wiz.err=e;if(!e)wiz.step++;render();window.scrollTo(0,0);return}
+  if(b.dataset.wzc){const id=b.dataset.wzc;let v=b.dataset.v;if(/^\d+$/.test(v))v=+v;if(b.dataset.multi){const a=wiz.d[id]=wiz.d[id]||[];const i=a.indexOf(v);i<0?a.push(v):a.splice(i,1)}else wiz.d[id]=v;render();return}
+  if(b.dataset.wzsave){wizSave();return}
+  if(b.id==='plrestore'){if(b.dataset.armed){const cur=plans[prog];plans[prog]=plans.bak[prog];plans.bak[prog]=cur;fixPlans();savePlans();day=null;render()}else{b.dataset.armed='1';b.textContent='Emin misin? Tekrar dokun'}return}
   if(b.dataset.lmode){loginMode=b.dataset.lmode;authErr='';const u=$('#lu')?$('#lu').value:'';render();keepLogin(u);return}
   if(b.dataset.tologin){closeSheet();lsSet('ad-guest',false);authErr='';render();window.scrollTo(0,0);return}
   if(b.dataset.guest){lsSet('ad-guest',true);render();return}
@@ -85,6 +91,7 @@ window.addEventListener('popstate',()=>{if(openEx){openEx=null;render()}});
 let saveT=null;
 document.addEventListener('input',ev=>{
   const t=ev.target;
+  if(t.dataset.wz&&wiz){wiz.d[t.dataset.wz]=t.value;return}
   if(t.dataset.f==='kgall'){exSets(t.dataset.k).forEach(x=>x.kg=t.value)}
   else if(t.dataset.f){const sets=exSets(t.dataset.k);sets[+t.dataset.i][t.dataset.f]=t.value}
   else if(t.id==='cardio'){getDraft().cardio=t.value}

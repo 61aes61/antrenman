@@ -3,7 +3,14 @@
 /* ---------- Kullanıcı programı ve ayarlar ---------- */
 const DEFAULT_PLAN=(()=>{const o={};for(const [p,P] of Object.entries(PROGRAMS)){o[p]={};for(const d of ['A','B'])o[p][d]=P.days[d].ex.map(k=>({k}))}return o})();
 let plans=lsGet('ad-plans',null)||JSON.parse(JSON.stringify(DEFAULT_PLAN));
-function fixPlans(){if(!plans||typeof plans!=='object')plans={};['salon','ev'].forEach(p=>{plans[p]=plans[p]||{};['A','B'].forEach(d=>{if(!Array.isArray(plans[p][d]))plans[p][d]=JSON.parse(JSON.stringify(DEFAULT_PLAN[p][d]))})})}
+function fixPlans(){
+  if(!plans||typeof plans!=='object')plans={};
+  ['salon','ev'].forEach(p=>{const P=plans[p]=plans[p]&&typeof plans[p]==='object'?plans[p]:{};
+    P.order=Array.isArray(P.order)&&P.order.length?P.order:['A','B'];P.titles=P.titles||{};
+    P.order.forEach(d=>{if(!Array.isArray(P[d]))P[d]=DEFAULT_PLAN[p][d]?JSON.parse(JSON.stringify(DEFAULT_PLAN[p][d])):[]})});
+}
+function dayKeysOf(p){return plans[p].order}
+function dayTitle(p,d){return (plans[p].titles||{})[d]||((PROGRAMS[p].days[d]||{}).title)||''}
 fixPlans();
 function savePlans(){lsSet('ad-plans',plans);cloudSave('meta',0,{plans})}
 function baseKeys(p,d){return (plans[p][d]||[]).map(x=>x.k).filter(k=>LIB[k])}
@@ -23,7 +30,7 @@ let mode='local';
 let openEx=null,pendingDel=null,pendingRender=false,saving=false,saveErr='';
 
 function sortedSessions(){return [...sessions].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))}
-function nextDay(p){const s=sortedSessions().find(x=>x.program===p);return s?(s.day==='A'?'B':'A'):'A'}
+function nextDay(p){const ks=dayKeysOf(p),s=sortedSessions().find(x=>x.program===p);if(!s)return ks[0];const i=ks.indexOf(s.day);return i<0?ks[0]:ks[(i+1)%ks.length]}
 function lastFor(k){for(const s of sortedSessions()){const e=s.ex&&s.ex[k];if(e&&e.some(x=>x.done))return {s,sets:e.filter(x=>x.done)}}return null}
 function draftKey(){return prog+'-'+day}
 function getDraft(){const k=draftKey();if(!drafts[k]){drafts[k]={date:today(),ex:{},cardio:''}}return drafts[k]}

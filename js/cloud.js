@@ -70,7 +70,7 @@ async function cloudMigrate(){
   const ops=[];
   sessions.forEach(s=>{const {id,...d}=s;ops.push([userRef().collection('sessions').doc(String(id)),clean(d)])});
   weights.forEach(w=>ops.push([userRef().collection('weights').doc(w.date),{date:w.date,kg:w.kg}]));
-  if(!meta.exists)ops.push([userRef().collection('meta').doc('state'),clean({plans,settings,prog})]);
+  if(!meta.exists)ops.push([userRef().collection('meta').doc('state'),clean(Object.assign({plans,settings,prog},profile?{profile}:{}))]);
   for(let i=0;i<ops.length;i+=400){const b=fdb.batch();ops.slice(i,i+400).forEach(([r,d])=>b.set(r,d,{merge:true}));await b.commit()}
   lsSet(key,true);
 }
@@ -81,6 +81,7 @@ function cloudSubscribe(){
   cloudUnsub.push(userRef().collection('meta').doc('state').onSnapshot(d=>{if(!d.exists||d.metadata.hasPendingWrites)return;const x=d.data();
     if(x.plans){plans=x.plans;fixPlans();lsSet('ad-plans',plans)}
     if(x.settings){Object.assign(settings,x.settings);lsSet('ad-settings',settings);applyTheme()}
+    if(x.profile){profile=x.profile;lsSet('ad-profile',profile)}
     softRender()},err));
 }
 /* kind: 'sessions' | 'weights' | 'meta'; data null = sil */
