@@ -162,5 +162,5 @@
     }
     requestAnimationFrame(frame);
   }
-  window.ExAnim = { mount, has: k => !!EX[k] };
+  window.ExAnim = { mount, has: k => !!EX[k], cues: k => (EX[k] ? EX[k].cues : []) };
 })();

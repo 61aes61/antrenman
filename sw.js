@@ -1,5 +1,5 @@
 // Sürümü her güncellemede artır: telefon yeni dosyaları bu sayede indirir.
-const VERSION = 'v4';
+const VERSION = 'v5';
 const CACHE = 'antrenman-' + VERSION;
 const FILES = ['./', './index.html', './manifest.webmanifest', './anim.js', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png'];
 
@@ -12,6 +12,8 @@ self.addEventListener('activate', e => {
 // Önce internetten dene (güncel sürüm gelsin), internet yoksa telefondaki kopyayı aç.
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  // Videolar ve dış siteler doğrudan internetten gelsin (iPhone video oynatma için gerekli).
+  if (new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(
     fetch(e.request).then(res => {
       if (res.ok && new URL(e.request.url).origin === location.origin) {

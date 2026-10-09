@@ -261,6 +261,11 @@ details.how summary{font-size:.88rem}
 .vcap{border-top:1px solid var(--line);color:var(--ink);font-weight:600;font-size:.86rem;text-align:center;padding:7px 10px;background:var(--surface)}
 .vhint{position:absolute;top:6px;right:8px;font-size:.66rem;color:var(--muted)}
 .vbox.paused .vhint::after{content:" · durdu"}
+
+.vbox.real video{display:block;width:100%;height:200px;object-fit:contain;background:#000}
+.vov{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(0,0,0,.62);color:#fff;border:0;border-radius:8px;padding:5px 10px}
+.vswap{position:absolute;top:6px;left:6px;border:0;border-radius:99px;background:rgba(0,0,0,.6);color:#fff;font:600 .72rem var(--body);padding:4px 10px;cursor:pointer}
+.credit{font-size:.72rem;color:var(--muted);justify-self:end;margin-top:-4px}
 </style>
 </head>
 <body>
@@ -310,6 +315,10 @@ const PROGRAMS={
   ev:{name:'Ev · sabah',days:{A:{title:'Sabah 1',ex:['pushup','bwsquat','bagrow','plank']},B:{title:'Sabah 2',ex:['pike','lunge','bridge','ytw','deadbug']}},
     note:'3 dk ısın: kol çevirme, kedi-deve, kalça açma, 10 yavaş squat. Hareketleri tur halinde yap, 3 tur. Tükenmeye kadar gitme.'}
 };
+
+/* ---------- Videolar (Pexels, ücretsiz lisans) ---------- */
+const VIDEOS={"squat": {"u": "https://videos.pexels.com/video-files/35585574/15079385_1080_1920_30fps.mp4", "p": "https://www.pexels.com/video/man-performing-squats-in-gym-with-equipment-35585574/"}, "bench": {"u": "https://videos.pexels.com/video-files/5320001/5320001-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-person-doing-bench-press-exercise-5320001/"}, "incline": {"u": "https://videos.pexels.com/video-files/34568705/14646162_1920_1080_25fps.mp4", "p": "https://www.pexels.com/video/intense-indoor-dumbbell-bench-press-workout-34568705/"}, "lateral": {"u": "https://videos.pexels.com/video-files/5319102/5319102-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-man-working-out-using-dumbbell-5319102/"}, "curl": {"u": "https://videos.pexels.com/video-files/4367577/4367577-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-biceps-curls-4367577/"}, "pushdown": {"u": "https://videos.pexels.com/video-files/6892083/6892083-sd_360_640_25fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-triceps-pushdown-with-his-instructor-6892083/"}, "plank": {"u": "https://videos.pexels.com/video-files/7801720/7801720-sd_960_406_25fps.mp4", "p": "https://www.pexels.com/video/a-woman-doing-plank-exercise-on-a-yoga-mat-7801720/"}, "pulldown": {"u": "https://videos.pexels.com/video-files/35585697/15079855_1080_1920_30fps.mp4", "p": "https://www.pexels.com/video/intense-gym-workout-with-lat-pulldown-35585697/"}, "seatedrow": {"u": "https://videos.pexels.com/video-files/4367642/4367642-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-a-seated-cable-row-4367642/"}, "ohp": {"u": "https://videos.pexels.com/video-files/4367541/4367541-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-dumbbell-shoulder-press-4367541/"}, "hammer": {"u": "https://videos.pexels.com/video-files/15528204/15528204-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-man-doing-biceps-exercises-with-dumbbells-at-the-gym-15528204/"}, "ohext": {"u": "https://videos.pexels.com/video-files/6286166/6286166-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/woman-doing-tricep-extensions-6286166/"}, "legraise": {"u": "https://videos.pexels.com/video-files/8981753/8981753-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/a-woman-lying-down-on-the-ground-with-legs-raised-on-a-tree-trunk-8981753/"}, "pushup": {"u": "https://videos.pexels.com/video-files/8520078/8520078-sd_960_394_25fps.mp4", "p": "https://www.pexels.com/video/a-fit-man-doing-push-ups-8520078/"}, "bwsquat": {"u": "https://videos.pexels.com/video-files/4267356/4267356-sd_640_360_30fps.mp4", "p": "https://www.pexels.com/video/video-of-woman-doing-squats-4267356/"}, "bagrow": {"u": "https://videos.pexels.com/video-files/5319435/5319435-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-man-working-out-using-dumbbell-5319435/"}, "lunge": {"u": "https://videos.pexels.com/video-files/8456658/8456658-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/a-person-doing-reverse-lunges-8456658/"}, "bridge": {"u": "https://videos.pexels.com/video-files/6525487/6525487-sd_640_360_25fps.mp4", "p": "https://www.pexels.com/video/woman-doing-glute-bridge-exercise-6525487/"}};
+let vmode=lsGet('ad-vmode','video');
 
 /* ---------- Helpers ---------- */
 const $=s=>document.querySelector(s);
@@ -407,7 +416,10 @@ function exCard(k){
     const pv=p?((kg&&p.kg!=null?fmtN(p.kg)+'×':'')+(p.reps==null?'?':p.reps)):'–';
     return `<div class="set${x.done?' done':''}"><span class="sn">${i+1}</span><span class="pv">${esc(pv)}</span><input class="in" id="r-${k}-${i}" data-k="${k}" data-i="${i}" data-f="reps" inputmode="numeric" value="${esc(x.reps)}" placeholder="${e.reps}" aria-label="Set ${i+1} ${e.t==='sn'?'saniye':'tekrar'}"><button type="button" class="chk" data-chk="${k}" data-i="${i}" aria-pressed="${x.done}" aria-label="Set ${i+1} tamam">✓</button></div>`;
   }).join('');
-  const video=window.ExAnim&&ExAnim.has(k)?`<div class="vbox" data-anim="${k}" role="img" aria-label="${esc(e.n)} hareket animasyonu"><canvas></canvas><div class="vcap"></div><span class="vhint">Durdurmak için dokun</span></div>`:'';
+  const hasAnim=window.ExAnim&&ExAnim.has(k),V=VIDEOS[k],showVid=V&&(vmode==='video'||!hasAnim);
+  const swap=V&&hasAnim?`<button type="button" class="vswap" data-vmode="${showVid?'cizim':'video'}">${showVid?'Çizime geç':'Videoya geç'}</button>`:'';
+  const video=showVid?`<div class="vbox real" data-vid="${k}"><video src="${esc(V.u)}" muted loop playsinline autoplay preload="auto" aria-label="${esc(e.n)} videosu"></video><div class="vcap vov"></div>${swap}</div><a class="credit" href="${esc(V.p)}" target="_blank" rel="noopener">Video: Pexels</a>`
+    :hasAnim?`<div class="vbox" data-anim="${k}" role="img" aria-label="${esc(e.n)} hareket animasyonu"><canvas></canvas><div class="vcap"></div><span class="vhint">Durdurmak için dokun</span>${swap}</div>`:'';
   return `<article class="ex${doneN===e.s?' complete':''}" id="ex-${k}">
     <div class="dhead">${thumb(k)}<div class="dt"><div class="chips"><span class="pill${e.leg?' leg':''}">${esc(e.r)}</span>${e.ss?`<span class="pill ss">Süper set · ${esc(LIB[e.ss].n)}</span>`:''}</div><h3>${esc(e.n)}</h3><div class="meta">${e.s} × ${e.reps}${e.t==='sn'?' sn':''}${e.per?' · '+esc(e.per):''} · ${doneN}/${e.s} set${hint}</div></div></div>
     ${wrow}<div class="sets">${hdr}${rows}</div>
@@ -415,7 +427,14 @@ function exCard(k){
     ${howTo(k)}
   </article>`;
 }
-function mountAnims(){if(!window.ExAnim)return;document.querySelectorAll('[data-anim]:not([data-on])').forEach(el=>ExAnim.mount(el,el.dataset.anim))}
+function mountAnims(){
+  if(window.ExAnim)document.querySelectorAll('[data-anim]:not([data-on])').forEach(el=>ExAnim.mount(el,el.dataset.anim));
+  document.querySelectorAll('[data-vid]:not([data-on])').forEach(el=>{el.dataset.on='1';const k=el.dataset.vid,cap=el.querySelector('.vcap'),v=el.querySelector('video'),cues=window.ExAnim?ExAnim.cues(k):[];let i=0;
+    if(cues.length){cap.textContent=cues[0];const iv=setInterval(()=>{if(!el.isConnected){clearInterval(iv);return}i=(i+1)%cues.length;cap.textContent=cues[i]},2600)}else cap.hidden=true;
+    v.addEventListener('error',()=>{if(window.ExAnim&&ExAnim.has(k)){el.outerHTML=`<div class="vbox" data-anim="${k}"><canvas></canvas><div class="vcap"></div><span class="vhint">Video yüklenemedi, çizim gösteriliyor</span></div>`;mountAnims()}});
+    el.addEventListener('click',ev=>{if(ev.target.closest('button'))return;v.paused?v.play().catch(()=>{}):v.pause()});
+    v.play().catch(()=>{});});
+}
 function howTo(k){const e=LIB[k];return `<details class="how"><summary>Nasıl yapılır · YouTube</summary><ul>${e.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><a class="vid" href="${yt(e.q)}" target="_blank" rel="noopener">Videoyu YouTube'da izle</a></details>`}
 
 function libView(){
@@ -601,6 +620,7 @@ function karneView(){
 document.addEventListener('click',async ev=>{
   const b=ev.target.closest('button');if(!b){if(ev.target.classList&&ev.target.classList.contains('sheet'))closeSheet();return}
   if(b.dataset.close){closeSheet();return}
+  if(b.dataset.vmode){vmode=b.dataset.vmode;lsSet('ad-vmode',vmode);const art=b.closest('article');if(art){const k=art.id.slice(3);art.outerHTML=exCard(k);mountAnims()}return}
   if(b.dataset.sum){const x=sessions.find(z=>z.id===b.dataset.sum);if(x)showSummary(x,sessions.filter(z=>(z.createdAt||0)<(x.createdAt||0)));return}
   if(b.dataset.plan){const [p,dd]=b.dataset.plan.split('-');prog=p;day=dd;lsSet('ad-prog',prog);openEx=null;saveErr='';render();return}
   if(b.dataset.open){openEx=b.dataset.open;try{history.pushState({ex:openEx},'')}catch(e){}render();window.scrollTo(0,0);return}
