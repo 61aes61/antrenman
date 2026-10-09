@@ -115,7 +115,7 @@ details.sess summary::-webkit-details-marker{display:none}
 .wlist li{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .x{border:0;background:transparent;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:2px 10px}
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:30}
-.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);height:var(--tabh)}
+.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);height:var(--tabh)}
 .tabs button{border:0;background:transparent;color:var(--muted);font:700 .78rem var(--body);letter-spacing:.04em;text-transform:uppercase;display:grid;place-items:center;align-content:center;gap:3px;cursor:pointer}
 .tabs button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .tabs button[aria-selected="true"]{color:var(--accent)}
@@ -285,6 +285,9 @@ details.how summary{font-size:.88rem}
 .pc-s{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .pc-s b{color:var(--ink)}
 .pchart svg{width:100%;height:auto;display:block}
+
+.tabs button{font-size:.6rem;letter-spacing:0;text-transform:none;font-weight:600;gap:2px}
+.tabs button svg{width:21px;height:21px}
 </style>
 </head>
 <body>
@@ -293,6 +296,8 @@ details.how summary{font-size:.88rem}
 <div id="rest" hidden><div class="card"><div class="r1"><span id="rest-t">1:30</span><span id="rest-l">Dinlenme</span><button type="button" data-act="rest-add">+30 sn</button><button type="button" data-act="rest-skip">Geç</button></div><div class="bar"><i id="rest-bar"></i></div></div></div>
 <nav class="tabs" aria-label="Bölümler"><div class="in" role="tablist">
   <button role="tab" data-tab="w" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/></svg>Antrenman</button>
+  <button role="tab" data-tab="kardiyo" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Kardiyo</button>
+  <button role="tab" data-tab="beslenme" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 0-3 3-3 6s1 4 3 4v8"/></svg>Beslenme</button>
   <button role="tab" data-tab="karne" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>Karne</button>
   <button role="tab" data-tab="hist" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Geçmiş</button>
   <button role="tab" data-tab="kilo" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 7-9"/><path d="M20 6v4M20 6h-4"/></svg>Kilo</button>
@@ -375,8 +380,9 @@ function render(){
   $('#today').textContent=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',weekday:'long'});
   document.querySelectorAll('.tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===tab)));
   if(tab==='lib')tab='w';
-  $('#title').textContent=tab==='w'?'Antrenman Programı':tab==='karne'?'Karne':tab==='hist'?'Geçmiş':'Kilo Takibi';
-  $('#main').innerHTML=tab==='w'?workoutView():tab==='karne'?karneView():tab==='hist'?histView():kiloView();
+  const TT={w:'Antrenman Programı',kardiyo:'Kardiyo',beslenme:'Beslenme',karne:'Karne',hist:'Geçmiş',kilo:'Kilo Takibi'};
+  $('#title').textContent=TT[tab]||TT.w;
+  $('#main').innerHTML=tab==='w'?workoutView():tab==='kardiyo'?soonView('Kardiyo','Yürüyüş, koşu ve bisiklet kayıtların burada olacak.'):tab==='beslenme'?soonView('Beslenme','Öğünlerin ve günlük protein, karbonhidrat, yağ, kalori takibin burada olacak.'):tab==='karne'?karneView():tab==='hist'?histView():kiloView();
   if(tab==='kilo')drawChart();
   mountAnims();
 }
@@ -403,7 +409,6 @@ function workoutView(){
   let h=`<div class="switch"><div class="mseg" role="group" aria-label="Program">${Object.entries(PROGRAMS).map(([pk,PP])=>`<button type="button" data-prog="${pk}" aria-pressed="${prog===pk}">${pk==='salon'?'Salon':'Ev'}</button>`).join('')}</div>
   <div class="dseg" role="group" aria-label="Gün">${['A','B'].map(x=>`<button type="button" data-day="${x}" aria-pressed="${day===x}">Gün ${dayNo(x)}${sub[x]?' · '+sub[x]:''}${nd===x?'<i>Sıradaki</i>':''}</button>`).join('')}</div></div>
   <details class="notes"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L2 20h20z" style="fill:var(--warn)"/><path d="M12 9v5" style="stroke:var(--bg)" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17" r="1.3" style="fill:var(--bg)"/></svg>Antrenman Notları<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><div class="nb"><p class="note">${esc(P.note)}</p><p class="note">Bir harekete dokun, setlerini orada işaretle. Mavi kutudaki hareketler süper set: arka arkaya yapılır.</p></div></details>
-  <label class="toggle" for="noleg"><input type="checkbox" id="noleg" ${noLegs?'checked':''}> Bugün bacak yok</label>
   <h2 class="hh">Hareketler</h2><div class="list">`;
   for(let i=0;i<list.length;i++){const k=list[i],e=LIB[k];
     if(e.ss&&list[i+1]===e.ss){h+=`<div class="ssg">${exRow(k)}${exRow(list[i+1])}<span class="ssb">Süper Set</span></div>`;i++}
@@ -655,6 +660,7 @@ function bodySVG(c,side){
    <rect x="41" y="142" width="15" height="48" rx="7" ${f('hams')}/><rect x="64" y="142" width="15" height="48" rx="7" ${f('hams')}/>`;
   return `<figure class="fig"><svg viewBox="0 0 120 250" role="img" aria-label="${side==='f'?'Önden':'Arkadan'} çalışan kaslar">${base}${side==='f'?front:back}</svg><figcaption>${side==='f'?'Ön':'Arka'}</figcaption></figure>`;
 }
+function soonView(t,d){return `<div class="empty" style="display:grid;gap:6px;justify-items:center;padding:40px 16px"><b style="font-size:1.05rem;color:var(--ink)">${esc(t)} yakında</b><span>${esc(d)}</span></div>`}
 function karneView(){
   const W=weekStats(),max=Math.max(10,...Object.values(W.c));
   const tile=(l,v)=>`<div class="tile"><span class="lbl">${l}</span><strong>${v}</strong></div>`;
